@@ -1,7 +1,7 @@
-package dayardiyev.catalog.entity;
+package dayardiyev.shop.entity;
 
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 
 @Entity
 @Table(name = "order_product")

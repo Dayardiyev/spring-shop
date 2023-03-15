@@ -1,6 +1,6 @@
-package dayardiyev.catalog.entity;
+package dayardiyev.shop.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity

@@ -1,9 +1,13 @@
-package dayardiyev.catalog.entity;
+package dayardiyev.shop.entity;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.ToString;
+
 import java.util.List;
 
 @Entity
+@ToString
 @Table(name = "categories")
 public class Category {
 
@@ -14,9 +18,11 @@ public class Category {
 
     private String name;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
     private List<Product> products;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "category")
     private List<Option> options;
 

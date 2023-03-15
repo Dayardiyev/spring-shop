@@ -1,6 +1,7 @@
-package dayardiyev.catalog.entity;
+package dayardiyev.shop.entity;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import java.util.List;
 
 @Entity
@@ -19,12 +20,17 @@ public class Product {
 
     private Integer price;
 
+
+    @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<Value> values;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<Review> reviews;
 
+
+    @JsonIgnore
     @OneToMany(mappedBy = "product")
     private List<OrderProduct>  orderProducts;
 

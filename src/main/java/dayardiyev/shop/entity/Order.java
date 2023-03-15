@@ -1,9 +1,9 @@
-package dayardiyev.catalog.entity;
+package dayardiyev.shop.entity;
 
 
-import dayardiyev.catalog.entity.enums.Status;
+import dayardiyev.shop.entity.enums.Status;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 

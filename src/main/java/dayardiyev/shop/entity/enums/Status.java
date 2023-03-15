@@ -1,4 +1,4 @@
-package dayardiyev.catalog.entity.enums;
+package dayardiyev.shop.entity.enums;
 
 public enum Status {
     CREATED,
