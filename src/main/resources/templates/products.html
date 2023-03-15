@@ -1,0 +1,48 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Products</title>
+</head>
+<body>
+<h3 class="my-3 text-center text-3xl" th:text="${category_name}"></h3>
+<div class="container mx-auto relative">
+
+    <div class="my-10">
+        <a th:href="@{'products/new'}" class="text-blue font-semibold  inline-block border border-2 py-2 px-1.5">New Product</a>
+    </div>
+    <table class="w-full text-left">
+        <thead class="bg-gray-50 uppercase text-gray-700">
+        <tr>
+            <th class="px-6 py-3">#</th>
+            <th class="px-6 py-3">Название</th>
+            <th class="px-6 py-3">Цена</th>
+            <th></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="border-b  font-semibold" th:each="product : ${products}">
+            <td class="px-6 py-3" th:text="${product.getId()}"></td>
+            <td class="px-6 py-3" th:text="${product.getName()}"></td>
+            <td class="px-6 py-3 text-gray-500" th:text="${product.getPrice()}"></td>
+            <td>
+                <a class="text-blue-700 hover:underline" th:href="@{|/products/edit/${product.getId()}|}">Edit</a>
+            </td>
+            <td>
+                <a class="text-red-700 hover:underline" th:href="@{|/products/delete/${product.getId()}|}">Remove</a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="text-right pr-3 py-6 text-xl ">
+        Средняя стоимость: <b th:text="${avg}"></b>
+    </div>
+</div>
+
+</body>
+</html>
