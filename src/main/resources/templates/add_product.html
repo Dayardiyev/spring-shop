@@ -1,0 +1,62 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <title>Добавить</title>
+</head>
+<body class="h-[100vh]">
+<div class="container h-full mx-auto flex justify-center items-center">
+    <form th:action="@{/products/add}" method="post" class="w-[25%] h-min">
+        <h2 class="text-3xl text-center pb-6">Добавить товар</h2>
+        <div th:if="${param.isEmpty()}">
+            <div th:each="category : ${categories}" class="flex items-center gap-2">
+                <input type="radio" name="radio" th:value="*{category.getId()}" th:name="categoryId"
+                       th:id="${category.getId()}" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                <label th:text="${category.getName()}" th:for="${category.getId()}"></label>
+            </div>
+        </div>
+        <input type="hidden" th:unless="${param.isEmpty()}" th:name="categoryId" th:value="*{category.getId()}">
+        <div th:object="${product}">
+            <div class="my-5 flex flex-col gap-2">
+                <label for="name" class="font-medium text-gray">Название</label>
+                <input type="text" th:field="*{name}" id="name"
+                       class="p-1.5 border border-gray-300 bg-gray-50 rounded-lg">
+                <p th:if="${#fields.hasErrors('name')}">Название товара не должно быть пустым</p>
+            </div>
+            <div class="my-5 flex flex-col gap-2">
+                <label for="price" class="font-medium text-gray">Цена</label>
+                <input type="text" th:field="*{price}" id="price"
+                       class="p-1.5 border border-gray-300 bg-gray-50 rounded-lg">
+            </div>
+        </div>
+
+        <button type="submit"
+                class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 float-right">
+            Добавить
+        </button>
+    </form>
+</div>
+
+</body>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+    }
+</style>
+<script>
+    const name = document.getElementById('name');
+    const price = document.getElementById('price');
+
+    if (name === null || price === null){
+        console.log(null)
+    }
+</script>
+</html>

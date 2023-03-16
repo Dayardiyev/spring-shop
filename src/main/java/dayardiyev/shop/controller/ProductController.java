@@ -57,17 +57,24 @@ public class ProductController {
         return "products";
     }
 
-    @GetMapping(path = "/products/new")
-    public String createProduct(Model model) {
+    @GetMapping(path = "/products/add")
+    public String createProduct(
+            @RequestParam(required = false) Long categoryId,
+            Model model) {
+        if (categoryId != null) {
+            Category category = categoryRepository.findById(categoryId).orElseThrow();
+            model.addAttribute("category", category);
+        } else {
+            model.addAttribute("categories", categoryRepository.findAll());
+        }
         model.addAttribute("product", new Product());
-        model.addAttribute("categories", categoryRepository.findAll());
-        return "create_product";
+        return "add_product";
     }
 
-    @PostMapping(path = "/products/new")
+    @PostMapping(path = "/products/add")
     public String saveCreatedProduct(
             @RequestParam long categoryId,
-            Product product){
+            Product product) {
         product.setCategory(categoryRepository.findById(categoryId).orElseThrow());
         productRepository.save(product);
         return "redirect:/products";
@@ -98,7 +105,7 @@ public class ProductController {
     @GetMapping(path = "/products/delete/{id}")
     public String deleteProduct(
             @PathVariable("id") Long id
-    ){
+    ) {
         productRepository.delete(productRepository.findById(id).orElseThrow());
         return "redirect:/products";
     }

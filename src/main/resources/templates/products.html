@@ -5,15 +5,22 @@
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>Products</title>
+    <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+    <title>Список товаров</title>
 </head>
 <body>
-<h3 class="my-3 text-center text-3xl" th:text="${category_name}"></h3>
+<h3 class="my-10 text-center text-3xl" th:text="${category_name}"></h3>
 <div class="container mx-auto relative">
-
-    <div class="my-10">
-        <a th:href="@{'products/new'}" class="text-blue font-semibold  inline-block border border-2 py-2 px-1.5">New Product</a>
+    <div class="flex justify-end">
+        <a th:href="@{'products/add'}" th:if="${category_id == null}" th:name="categoryId" th:value="*{category_id}"
+           class="text-white font-medium bg-blue-700 rounded-xl inline-block py-3 px-6 mb-10">Добавить</a>
+        <a th:href="@{'products/add?categoryId=' + ${category_id}}" th:if="${category_id != null}"
+           class="text-white font-medium bg-blue-700 rounded-xl absolute r-0 py-3 px-6 -translate-y-20">Добавить</a>
     </div>
     <table class="w-full text-left">
         <thead class="bg-gray-50 uppercase text-gray-700">
@@ -21,28 +28,33 @@
             <th class="px-6 py-3">#</th>
             <th class="px-6 py-3">Название</th>
             <th class="px-6 py-3">Цена</th>
-            <th></th>
-            <th></th>
+            <th class="px-6 py-3"></th>
+            <th class="px-6 py-3"></th>
         </tr>
         </thead>
         <tbody>
-        <tr class="border-b  font-semibold" th:each="product : ${products}">
+        <tr class="border-b font-medium" th:each="product : ${products}">
             <td class="px-6 py-3" th:text="${product.getId()}"></td>
-            <td class="px-6 py-3" th:text="${product.getName()}"></td>
+            <td class="px-6 py-3 font-semibold" th:text="${product.getName()}"></td>
             <td class="px-6 py-3 text-gray-500" th:text="${product.getPrice()}"></td>
-            <td>
-                <a class="text-blue-700 hover:underline" th:href="@{|/products/edit/${product.getId()}|}">Edit</a>
+            <td class="text-center">
+                <a class="text-blue-600 hover:text-blue-800 text-lg" th:href="@{|/products/edit/${product.getId()}|}"><i class="fa-solid fa-pen-to-square"></i></a>
             </td>
-            <td>
-                <a class="text-red-700 hover:underline" th:href="@{|/products/delete/${product.getId()}|}">Remove</a>
+            <td class="text-center">
+                <a class="text-red-600 hover:text-red-800 text-xl" th:href="@{|/products/delete/${product.getId()}|}"><i class="fa-solid fa-xmark"></i></a>
             </td>
         </tr>
         </tbody>
     </table>
     <div class="text-right pr-3 py-6 text-xl ">
-        Средняя стоимость: <b th:text="${avg}"></b>
+        Средняя стоимость: <span class="font-semibold" th:text="${avg}"></span>
     </div>
 </div>
 
 </body>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+    }
+</style>
 </html>
