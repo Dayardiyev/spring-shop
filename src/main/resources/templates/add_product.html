@@ -12,9 +12,9 @@
           rel="stylesheet">
     <title>Добавить</title>
 </head>
-<body class="h-[100vh]">
+<body class="h-[100vh] bg-gray-100">
 <div class="container h-full mx-auto flex justify-center items-center">
-    <form th:action="@{/products/add}" method="post" class="w-[25%] h-min">
+    <form th:action="@{/products/add}" method="post" class="h-min lg:w-1/3 bg-white px-10 py-12 rounded-3xl shadow-lg">
         <h2 class="text-3xl text-center pb-6">Добавить товар</h2>
         <div th:if="${param.isEmpty()}">
             <div th:each="category : ${categories}" class="flex items-center gap-2">
@@ -28,20 +28,28 @@
             <div class="my-5 flex flex-col gap-2">
                 <label for="name" class="font-medium text-gray">Название</label>
                 <input type="text" th:field="*{name}" id="name"
-                       class="p-1.5 border border-gray-300 bg-gray-50 rounded-lg">
+                       class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg">
                 <p th:if="${#fields.hasErrors('name')}">Название товара не должно быть пустым</p>
             </div>
             <div class="my-5 flex flex-col gap-2">
                 <label for="price" class="font-medium text-gray">Цена</label>
                 <input type="text" th:field="*{price}" id="price"
-                       class="p-1.5 border border-gray-300 bg-gray-50 rounded-lg">
+                       class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg">
             </div>
         </div>
 
-        <button type="submit"
-                class="text-white bg-blue-700 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 float-right">
-            Добавить
-        </button>
+        <div class="flex gap-5">
+            <button type="submit"
+                    class="text-white w-full bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">
+                Добавить
+            </button>
+            <a th:if="${param.isEmpty()}" href="/products" class="text-white w-full bg-gray-400 hover:bg-gray-600 font-medium text-center rounded-lg text-sm px-5 py-2.5">
+                Отменить
+            </a>
+            <a th:unless="${param.isEmpty()}" th:href="@{|/products?categoryId=${category.getId()}|}" class="text-white w-full bg-gray-400 hover:bg-gray-600 font-medium text-center rounded-lg text-sm px-5 py-2.5">
+                Отменить
+            </a>
+        </div>
     </form>
 </div>
 

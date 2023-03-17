@@ -18,15 +18,16 @@
 <div class="container mx-auto relative">
     <div class="flex justify-end">
         <a th:href="@{'products/add'}" th:if="${category_id == null}" th:name="categoryId" th:value="*{category_id}"
-           class="text-white font-medium bg-blue-700 rounded-xl inline-block py-3 px-6 mb-10">Добавить</a>
+           class="text-white font-medium bg-blue-600 hover:bg-blue-800 rounded-xl inline-block py-3 px-6 mb-10">Добавить</a>
         <a th:href="@{'products/add?categoryId=' + ${category_id}}" th:if="${category_id != null}"
-           class="text-white font-medium bg-blue-700 rounded-xl absolute r-0 py-3 px-6 -translate-y-20">Добавить</a>
+           class="text-white font-medium bg-blue-600 hover:bg-blue-800 rounded-xl absolute r-0 py-3 px-6 -translate-y-20">Добавить</a>
     </div>
     <table class="w-full text-left">
         <thead class="bg-gray-50 uppercase text-gray-700">
         <tr>
             <th class="px-6 py-3">#</th>
             <th class="px-6 py-3">Название</th>
+            <th th:if="${param.isEmpty()}" class="px-6 py-3">Категория</th>
             <th class="px-6 py-3">Цена</th>
             <th class="px-6 py-3"></th>
             <th class="px-6 py-3"></th>
@@ -36,6 +37,9 @@
         <tr class="border-b font-medium" th:each="product : ${products}">
             <td class="px-6 py-3" th:text="${product.getId()}"></td>
             <td class="px-6 py-3 font-semibold" th:text="${product.getName()}"></td>
+            <td th:if="${param.isEmpty()}" class="px-6 py-3">
+                <a th:href="@{|products?categoryId=${product.getCategory().getId()}|}" th:text="${product.getCategory().getName()}" class="text-gray-700 hover:text-gray-900"></a>
+            </td>
             <td class="px-6 py-3 text-gray-500" th:text="${product.getPrice()}"></td>
             <td class="text-center">
                 <a class="text-blue-600 hover:text-blue-800 text-lg" th:href="@{|/products/edit/${product.getId()}|}"><i class="fa-solid fa-pen-to-square"></i></a>
