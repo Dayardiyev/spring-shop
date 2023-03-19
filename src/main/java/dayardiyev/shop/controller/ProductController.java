@@ -2,9 +2,13 @@ package dayardiyev.shop.controller;
 
 
 import dayardiyev.shop.entity.Category;
+import dayardiyev.shop.entity.Option;
 import dayardiyev.shop.entity.Product;
+import dayardiyev.shop.entity.Value;
 import dayardiyev.shop.repository.CategoryRepository;
+import dayardiyev.shop.repository.OptionRepository;
 import dayardiyev.shop.repository.ProductRepository;
+import dayardiyev.shop.repository.ValueRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -14,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -24,6 +29,12 @@ public class ProductController {
 
     @Autowired
     private ProductRepository productRepository;
+
+    @Autowired
+    private ValueRepository valueRepository;
+
+    @Autowired
+    private OptionRepository optionRepository;
 
 
     @GetMapping(path = "/products")
@@ -63,6 +74,11 @@ public class ProductController {
             Model model) {
         if (categoryId != null) {
             Category category = categoryRepository.findById(categoryId).orElseThrow();
+            List<String> optionValues = new ArrayList<>();
+            for (int i = 0; i < category.getOptions().size(); i++) {
+                optionValues.add("");
+            }
+            model.addAttribute("optionValues", optionValues);
             model.addAttribute("category", category);
         } else {
             model.addAttribute("categories", categoryRepository.findAll());
@@ -74,9 +90,20 @@ public class ProductController {
     @PostMapping(path = "/products/add")
     public String saveCreatedProduct(
             @RequestParam long categoryId,
+            @RequestParam List<String> optionValues,
             Product product) {
-        product.setCategory(categoryRepository.findById(categoryId).orElseThrow());
+        Category category = categoryRepository.findById(categoryId).orElseThrow();
+        product.setCategory(category);
         productRepository.save(product);
+
+        for (int i = 0; i < optionValues.size(); i++) {
+            Value value = new Value();
+            value.setProduct(product);
+            value.setOption(category.getOptions().get(i));
+            value.setValue(optionValues.get(i));
+            valueRepository.save(value);
+        }
+
         return "redirect:/products";
     }
 
@@ -85,8 +112,25 @@ public class ProductController {
             @PathVariable("id") Long id,
             Model model) {
         Product product = productRepository.findById(id).orElseThrow();
-        System.out.println(product.getId());
+
+        List<Option> options = optionRepository.findAllByCategoryOrderById(product.getCategory());
+        List<Value> values = valueRepository.findAllByProductOrderByOption(product);
+        if (values.size() < options.size()) {
+            for (Option option : options) {
+                Value valueByProductAndOption = valueRepository
+                        .findValueByProductAndOption(product, option);
+                if (valueByProductAndOption == null) {
+                    Value value = new Value();
+                    value.setProduct(product);
+                    value.setOption(option);
+                    value.setValue("NULL");
+                    valueRepository.saveAndFlush(value);
+                }
+            }
+        }
         model.addAttribute("product", product);
+        model.addAttribute("values", values);
+        model.addAttribute("options", options);
         return "update_product";
     }
 
@@ -94,10 +138,16 @@ public class ProductController {
     public String saveUpdatedProduct(
             @RequestParam long id,
             @RequestParam(required = false) String updatedName,
-            @RequestParam(required = false) Integer updatedPrice) {
+            @RequestParam(required = false) Integer updatedPrice,
+            @RequestParam(required = false) List<String> updatedValues) {
         Product product = productRepository.findById(id).orElseThrow();
         if (updatedName != null) product.setName(updatedName);
         if (updatedPrice != null) product.setPrice(updatedPrice);
+        for (int i = 0; i < updatedValues.size(); i++) {
+            Value value = product.getValues().get(i);
+            value.setValue(updatedValues.get(i));
+            valueRepository.save(value);
+        }
         productRepository.save(product);
         return "redirect:/products";
     }
@@ -106,7 +156,12 @@ public class ProductController {
     public String deleteProduct(
             @PathVariable("id") Long id
     ) {
-        productRepository.delete(productRepository.findById(id).orElseThrow());
+        Product product = productRepository.findById(id).orElseThrow();
+
+        valueRepository.deleteAll(product.getValues());
+
+        productRepository.delete(product);
+
         return "redirect:/products";
     }
 
