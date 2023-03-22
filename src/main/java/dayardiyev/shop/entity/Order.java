@@ -1,7 +1,7 @@
 package dayardiyev.shop.entity;
 
 
-import dayardiyev.shop.entity.enums.Status;
+import dayardiyev.shop.entity.enumiration.Status;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

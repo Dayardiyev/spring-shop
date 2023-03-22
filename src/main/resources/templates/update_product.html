@@ -17,21 +17,21 @@
     <form th:action="@{|/products/edit/${product.getId()}|}" method="post"
           class="h-min lg:w-2/5 bg-white px-10 py-12 rounded-3xl shadow-lg">
         <h2 class="text-3xl text-center pb-6">Редактировать</h2>
-        <input type="hidden" name="id" th:value="${product.getId()}">
+        <input type="hidden" name="productId" th:value="${product.getId()}">
         <div class="my-5 flex flex-col gap-2">
             <label for="name" class="font-medium text-gray">Название</label>
-            <input type="text" th:value="*{name}" th:name="updatedName" id="name"
+            <input type="text" th:value="*{name}" name="name" id="name"
                    class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg">
         </div>
         <div class="my-5 flex flex-col gap-2">
             <label for="price" class="font-medium text-gray">Цена</label>
-            <input type="text" th:value="*{price}" th:name="updatedPrice" id="price"
+            <input type="text" th:value="*{price}" name="price" id="price"
                    class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg">
         </div>
         <div class="grid grid-cols-2 gap-x-5 gap-y-2.5">
             <div th:each="option, stat : ${options}" class="flex flex-col gap-2 w-full">
                 <label th:for="${option.getId()}" class="font-medium text-gray" th:text="${option.getName()}"></label>
-                <input type="text" th:value="${values.get(stat.index).value}" name="updatedValues"
+                <input type="text" th:value="${@productService.findValueByProductAndOption(product, option)}" name="updatedValues"
                        th:id="${option.getId()}"
                        class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg">
             </div>

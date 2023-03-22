@@ -38,7 +38,7 @@
             <div class="my-5 flex flex-col gap-2">
                 <label for="name" class="font-medium text-gray">Название</label>
                 <input type="text" th:field="*{name}" id="name"
-                       class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required minlength="2">
+                       class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required minlength="2" autocomplete="off">
             </div>
             <div class="my-5 flex flex-col gap-2">
                 <label for="price" class="font-medium text-gray">Цена</label>
@@ -46,10 +46,10 @@
                        class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required>
             </div>
             <div class="grid grid-cols-2 gap-x-5 gap-y-2.5">
-                <div th:each="option, stat : ${category.getOptions()}" class="flex flex-col gap-2 w-full">
+                <div th:each="option, stat : ${options}" class="flex flex-col gap-2 w-full">
                     <label th:for="${option.getId()}" class="font-medium text-gray"
                            th:text="${option.getName()}"></label>
-                    <input type="text" th:value="${optionValues[__${stat.index}__]}" name="optionValues"
+                    <input type="text" th:value="${optionValues.get(stat.index)}" name="optionValues"
                            th:id="${option.getId()}"
                            class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required>
                 </div>

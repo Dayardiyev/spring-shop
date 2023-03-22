@@ -1,4 +1,4 @@
-package dayardiyev.shop.entity.enums;
+package dayardiyev.shop.entity.enumiration;
 
 public enum Role {
     ADMIN("admin", "Администратор"),

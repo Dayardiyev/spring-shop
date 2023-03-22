@@ -4,12 +4,15 @@ package dayardiyev.shop.controller;
 import dayardiyev.shop.entity.Category;
 import dayardiyev.shop.entity.Option;
 import dayardiyev.shop.entity.Product;
-import dayardiyev.shop.entity.Value;
 import dayardiyev.shop.repository.CategoryRepository;
 import dayardiyev.shop.repository.OptionRepository;
 import dayardiyev.shop.repository.ProductRepository;
 import dayardiyev.shop.repository.ValueRepository;
+import dayardiyev.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,6 +34,9 @@ public class ProductController {
     private ProductRepository productRepository;
 
     @Autowired
+    private ProductService productService;
+
+    @Autowired
     private ValueRepository valueRepository;
 
     @Autowired
@@ -46,6 +52,11 @@ public class ProductController {
                 Sort.Order.asc("category"),
                 Sort.Order.asc("id")
         );
+
+//        if (page == null) page = 0;
+//        Pageable pageable = PageRequest.of(page, 10);
+//        Page<Product> productPage = productRepository.findAll(pageable);
+
         List<Product> products = productRepository.findAll(sort);
         if (categoryId != null) {
             Category category = categoryRepository.findById(categoryId).orElseThrow();
@@ -63,7 +74,7 @@ public class ProductController {
 
         model.addAttribute("avg", avg);
         model.addAttribute("products", products);
-        model.addAttribute("category_id", categoryId);
+        model.addAttribute("categoryId", categoryId);
 
         return "products";
     }
@@ -79,6 +90,7 @@ public class ProductController {
                 optionValues.add("");
             }
             model.addAttribute("optionValues", optionValues);
+            model.addAttribute("options", optionRepository.findAllByCategoryOrderById(category));
             model.addAttribute("category", category);
         } else {
             model.addAttribute("categories", categoryRepository.findAll());
@@ -92,18 +104,7 @@ public class ProductController {
             @RequestParam long categoryId,
             @RequestParam List<String> optionValues,
             Product product) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow();
-        product.setCategory(category);
-        productRepository.save(product);
-
-        for (int i = 0; i < optionValues.size(); i++) {
-            Value value = new Value();
-            value.setProduct(product);
-            value.setOption(category.getOptions().get(i));
-            value.setValue(optionValues.get(i));
-            valueRepository.save(value);
-        }
-
+        productService.addProduct(categoryId, product, optionValues);
         return "redirect:/products";
     }
 
@@ -112,43 +113,19 @@ public class ProductController {
             @PathVariable("id") Long id,
             Model model) {
         Product product = productRepository.findById(id).orElseThrow();
-
         List<Option> options = optionRepository.findAllByCategoryOrderById(product.getCategory());
-        List<Value> values = valueRepository.findAllByProductOrderByOption(product);
-        if (values.size() < options.size()) {
-            for (Option option : options) {
-                Value valueByProductAndOption = valueRepository
-                        .findValueByProductAndOption(product, option);
-                if (valueByProductAndOption == null) {
-                    Value value = new Value();
-                    value.setProduct(product);
-                    value.setOption(option);
-                    value.setValue("NULL");
-                    valueRepository.saveAndFlush(value);
-                }
-            }
-        }
         model.addAttribute("product", product);
-        model.addAttribute("values", values);
         model.addAttribute("options", options);
         return "update_product";
     }
 
     @PostMapping(path = "/products/edit/{id}")
     public String saveUpdatedProduct(
-            @RequestParam long id,
-            @RequestParam(required = false) String updatedName,
-            @RequestParam(required = false) Integer updatedPrice,
+            @RequestParam long productId,
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) Integer price,
             @RequestParam(required = false) List<String> updatedValues) {
-        Product product = productRepository.findById(id).orElseThrow();
-        if (updatedName != null) product.setName(updatedName);
-        if (updatedPrice != null) product.setPrice(updatedPrice);
-        for (int i = 0; i < updatedValues.size(); i++) {
-            Value value = product.getValues().get(i);
-            value.setValue(updatedValues.get(i));
-            valueRepository.save(value);
-        }
-        productRepository.save(product);
+        productService.updateProduct(productId, name, price, updatedValues);
         return "redirect:/products";
     }
 
