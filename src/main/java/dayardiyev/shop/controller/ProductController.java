@@ -113,6 +113,7 @@ public class ProductController {
     public String updateProduct(
             @PathVariable("id") Long id,
             Model model) {
+
         Product product = productRepository.findById(id).orElseThrow();
         List<Option> options = optionRepository.findAllByCategoryOrderById(product.getCategory());
         model.addAttribute("product", product);
