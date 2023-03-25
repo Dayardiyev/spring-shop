@@ -29,13 +29,13 @@ public class ProductService {
     @Autowired
     private OptionRepository optionRepository;
 
-    public void addProduct(long categoryId, Product product, List<String> values){
+    public void addProduct(long categoryId, Product product, List<String> values) {
         Category category = categoryRepository.findById(categoryId).orElseThrow();
         List<Option> options = optionRepository.findAllByCategoryOrderById(category);
         product.setCategory(category);
         productRepository.save(product);
 
-        for (int i = 0; i < values.size(); i++) {
+        for (int i = 0; i < options.size(); i++) {
             Value value = new Value();
             value.setProduct(product);
             value.setOption(options.get(i));
@@ -57,6 +57,8 @@ public class ProductService {
                 value = new Value();
                 value.setProduct(product);
                 value.setOption(options.get(i));
+                value.setValue(values.get(i));
+            } else if (!value.getValue().equals(values.get(i))) {
                 value.setValue(values.get(i));
             }
             valueRepository.save(value);

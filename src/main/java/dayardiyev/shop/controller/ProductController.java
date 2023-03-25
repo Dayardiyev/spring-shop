@@ -95,6 +95,7 @@ public class ProductController {
         } else {
             model.addAttribute("categories", categoryRepository.findAll());
         }
+        model.addAttribute("categoryId", categoryId);
         model.addAttribute("product", new Product());
         return "add_product";
     }
@@ -134,12 +135,8 @@ public class ProductController {
             @PathVariable("id") Long id
     ) {
         Product product = productRepository.findById(id).orElseThrow();
-
         valueRepository.deleteAll(product.getValues());
-
         productRepository.delete(product);
-
         return "redirect:/products";
     }
-
 }

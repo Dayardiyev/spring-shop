@@ -29,9 +29,10 @@
                    class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg">
         </div>
         <div class="grid grid-cols-2 gap-x-5 gap-y-2.5">
-            <div th:each="option, stat : ${options}" class="flex flex-col gap-2 w-full">
+            <div th:each="option : ${options}" class="flex flex-col gap-2 w-full">
                 <label th:for="${option.getId()}" class="font-medium text-gray" th:text="${option.getName()}"></label>
-                <input type="text" th:value="${@productService.findValueByProductAndOption(product, option)}" name="updatedValues"
+                <input type="text" th:value="${@productService.findValueByProductAndOption(product, option)}"
+                       name="updatedValues"
                        th:id="${option.getId()}"
                        class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg">
             </div>
