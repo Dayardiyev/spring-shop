@@ -5,12 +5,15 @@ import dayardiyev.shop.entity.enumiration.Role;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
 
@@ -18,7 +21,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(value = EnumType.STRING)
+    @Enumerated(value = EnumType.ORDINAL)
     private Role role;
 
     private String login;

@@ -14,20 +14,26 @@
     <title>Список товаров</title>
 </head>
 <body>
-<h3 class="my-10 text-center text-3xl" th:text="${category_name}"></h3>
-<div class="container mx-auto relative">
-    <div class="flex justify-end">
-        <a th:href="@{'products/add'}" th:if="${categoryId == null}" th:name="categoryId" th:value="*{categoryId}"
-           class="text-white font-medium bg-blue-600 hover:bg-blue-800 rounded-xl inline-block py-3 px-6 mb-10">Добавить</a>
-        <a th:href="@{'products/add?categoryId=' + ${categoryId}}" th:if="${categoryId != null}"
-           class="text-white font-medium bg-blue-600 hover:bg-blue-800 rounded-xl absolute r-0 py-3 px-6 -translate-y-20">Добавить</a>
+<nav class="py-8 ">
+    <div class="container mx-auto flex items-center justify-end gap-6">
+        <div class="flex items-center">
+            <a th:href="@{'products/add'}" th:if="${categoryId == null}"
+               class="text-white font-medium bg-gray-700 hover:bg-gray-600 rounded-xl inline-block py-3 px-6">Добавить</a>
+            <a th:href="@{'products/add?categoryId=' + ${categoryId}}" th:if="${categoryId != null}"
+               class="text-white font-medium bg-gray-700 hover:bg-gray-600 rounded-xl py-3 px-6">Добавить</a>
+        </div>
+        <div class="flex gap-12 text-lg uppercase font-medium" th:if="${user}" th:text="${user.getName()}"></div>
+        <div class="flex gap-12 text-lg uppercase font-medium" th:unless="${user}">Username</div>
     </div>
+</nav>
+<!--<h3 class="my-10 text-center text-3xl" th:if="${category_name}" th:text="${category_name}"></h3>-->
+<div class="container mx-auto relative">
     <table class="w-full text-left">
-        <thead class="bg-gray-50 uppercase text-gray-700">
+        <thead class="bg-gray-800 uppercase text-white">
         <tr class="border-b">
             <th class="px-6 py-3">#</th>
             <th class="px-6 py-3">Название</th>
-            <th th:if="${param.isEmpty()}" class="px-6 py-3">Категория</th>
+            <th th:if="${categoryId == null}" class="px-6 py-3">Категория</th>
             <th class="px-6 py-3">Цена</th>
             <th class="px-6 py-3"></th>
             <th class="px-6 py-3"></th>
@@ -36,8 +42,10 @@
         <tbody>
         <tr class="font-medium even:bg-slate-50" th:each="product : ${products}">
             <td class="px-6 py-3" th:text="${product.getId()}"></td>
-            <td class="px-6 py-3 font-semibold" th:text="${product.getName()}"></td>
-            <td th:if="${param.isEmpty()}" class="px-6 py-3">
+            <td class="px-6 py-3 font-semibold">
+                <a th:href="@{|products/${product.getId()}|}" th:text="${product.getName()}"></a>
+            </td>
+            <td th:if="${categoryId == null}" class="px-6 py-3">
                 <a th:href="@{|products?categoryId=${product.getCategory().getId()}|}" th:text="${product.getCategory().getName()}" class="text-gray-700 hover:text-gray-900"></a>
             </td>
             <td class="px-6 py-3 text-gray-500" th:text="${product.getPrice()}"></td>

@@ -1,0 +1,68 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Регистрация</title>
+</head>
+<body class="h-[100vh] bg-gray-100">
+<div class="container h-full mx-auto flex justify-center items-center">
+    <form action="/registration" method="post" th:object="${user}"
+          class="h-min bg-white px-10 py-12 rounded-3xl shadow-lg">
+        <h2 class="text-3xl text-center pb-6">Регистрация</h2>
+        <div class="flex gap-6 my-5">
+            <div class="flex flex-col gap-2">
+                <label for="name" class="font-medium text-gray">Имя</label>
+                <input type="text" id="name" th:field="*{name}"
+                       class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required>
+            </div>
+            <div class="flex flex-col gap-2">
+                <label for="lastname" class="font-medium text-gray">Фамилия</label>
+                <input type="text" id="lastname" th:field="*{lastname}"
+                       class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required>
+            </div>
+        </div>
+        <div class="my-5 flex flex-col gap-2">
+            <label for="login" class="font-medium text-gray">Логин</label>
+            <input type="text" id="login" th:field="*{login}"
+                   class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required>
+        </div>
+        <div class="my-5 flex flex-col gap-2">
+            <label for="password" class="font-medium text-gray">Пароль</label>
+            <input type="password" id="password" th:field="*{password}"
+                   class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required>
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label for="roles" class="font-medium text-gray">Роль</label>
+            <select id="roles" th:field="*{role}"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <option th:each="role : ${roles}"
+                        th:value="${role}"
+                        th:text="${role.getDisplayName()}"></option>
+            </select>
+        </div>
+        <div class="flex flex-col gap-5 mt-10">
+            <button type="submit"
+                    class="text-white w-full bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm 2xl:text-md px-5 py-2.5">
+                Зарегистрироваться
+            </button>
+            <p class="text-center text-gray-700">Есть аккаунт?  <a href="/" class="text-blue-600 hover:text-blue-800">Вход</a></p>
+        </div>
+    </form>
+</div>
+
+</body>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+    }
+</style>
+</html>

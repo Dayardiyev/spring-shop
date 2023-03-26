@@ -79,6 +79,19 @@ public class ProductController {
         return "products";
     }
 
+    @GetMapping(path = "/products/{id}")
+    public String getProduct(
+            @PathVariable Long id,
+            Model model
+    ){
+        Product product = productRepository.findById(id).orElseThrow();
+        Category category = product.getCategory();
+        List<Option> options = optionRepository.findAllByCategoryOrderById(category);
+        model.addAttribute("product", product);
+        model.addAttribute("options", options);
+        return "product";
+    }
+
     @GetMapping(path = "/products/add")
     public String createProduct(
             @RequestParam(required = false) Long categoryId,
