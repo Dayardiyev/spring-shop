@@ -39,22 +39,12 @@
             <input type="password" id="password" th:field="*{password}"
                    class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required>
         </div>
-
-        <div class="flex flex-col gap-2">
-            <label for="roles" class="font-medium text-gray">Роль</label>
-            <select id="roles" th:field="*{role}"
-                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-                <option th:each="role : ${roles}"
-                        th:value="${role}"
-                        th:text="${role.getDisplayName()}"></option>
-            </select>
-        </div>
         <div class="flex flex-col gap-5 mt-10">
             <button type="submit"
                     class="text-white w-full bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm 2xl:text-md px-5 py-2.5">
                 Зарегистрироваться
             </button>
-            <p class="text-center text-gray-700">Есть аккаунт?  <a href="/" class="text-blue-600 hover:text-blue-800">Вход</a></p>
+            <p class="text-center text-gray-700">Есть аккаунт?  <a href="/" class="text-blue-600 hover:underline">Вход</a></p>
         </div>
     </form>
 </div>

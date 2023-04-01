@@ -21,12 +21,12 @@
         <div class="my-5 flex flex-col gap-2">
             <label for="name" class="font-medium text-gray">Название</label>
             <input type="text" th:value="*{name}" name="name" id="name"
-                   class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg">
+                   class="py-1.5 px-2.5 border-2 border-gray-300 rounded-lg bg-white">
         </div>
         <div class="my-5 flex flex-col gap-2">
             <label for="price" class="font-medium text-gray">Цена</label>
             <input type="text" th:value="*{price}" name="price" id="price"
-                   class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg">
+                   class="py-1.5 px-2.5 border-2 border-gray-300 rounded-lg bg-white">
         </div>
         <div class="grid grid-cols-2 gap-x-5 gap-y-2.5">
             <div th:each="option : ${options}" class="flex flex-col gap-2 w-full">
@@ -34,7 +34,7 @@
                 <input type="text" th:value="${@productService.findValueByProductAndOption(product, option)}"
                        name="updatedValues"
                        th:id="${option.getId()}"
-                       class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg">
+                       class="py-1.5 px-2.5 border-2 border-gray-300 rounded-lg bg-white" required>
             </div>
         </div>
         <div class="flex gap-5 mt-10">

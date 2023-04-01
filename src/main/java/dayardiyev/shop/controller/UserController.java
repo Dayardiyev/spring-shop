@@ -46,16 +46,23 @@ public class UserController {
     @GetMapping(path = "/registration")
     public String userSignUp(Model model) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles", Role.values());
         return "user_registration";
     }
 
     @PostMapping(path = "/registration")
     public String saveNewUser(User user, RedirectAttributes redirectAttributes) {
         user.setCreatedAt(LocalDateTime.now());
+        user.setRole(Role.USER);
         userRepository.save(user);
         redirectAttributes.addFlashAttribute("user", user);
         return "redirect:/products";
+    }
+
+    @GetMapping(path = "/user")
+    public String userProfile(@RequestParam(name = "id") long userId, Model model) {
+        User user = userRepository.findById(userId).orElseThrow();
+        model.addAttribute("user", user);
+        return "user_information";
     }
 
 }

@@ -30,10 +30,11 @@
         <div th:if="${error}" th:text="${error}" class="text-center text-red-800"></div>
         <div class="mt-10 flex flex-col gap-4">
             <button type="submit"
-                    class="text-white bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm px-12 py-2.5">
-                Вход
+                    class="text-white bg-blue-600 hover:bg-blue-700 font-medium rounded-lg text-sm px-12 py-2.5 drop-shadow-lg">
+                Войти
             </button>
-            <a href="/registration" class="text-gray-800 hover:text-gray-900 text-center">Зарегистрироваться</a>
+            <span class="text-center">Нету аккаунта?
+                <a href="/registration" class="text-blue-600 hover:underline">Создать</a></span>
         </div>
     </form>
 </div>

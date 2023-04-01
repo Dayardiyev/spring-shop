@@ -21,7 +21,7 @@
         <div th:each="category : ${categories}" class="flex items-center gap-2">
             <input type="radio" name="category" th:value="*{category.getId()}" th:name="categoryId"
                    th:id="${category.getId()}"
-                   class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 focus:ring-2">
+                   class="w-4 h-4 text-blue-600" required>
             <label th:text="${category.getName()}" th:for="${category.getId()}"
                    class="2xl:text-lg"></label>
         </div>
@@ -39,13 +39,13 @@
             <div class="my-5 flex flex-col gap-2">
                 <label for="name" class="font-medium text-gray">Название</label>
                 <input type="text" th:field="*{name}" id="name"
-                       class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required minlength="2"
+                       class="py-1.5 px-2.5 border-2 border-gray-300 rounded-lg bg-white" required minlength="2"
                        autocomplete="off">
             </div>
             <div class="my-5 flex flex-col gap-2">
                 <label for="price" class="font-medium text-gray">Цена</label>
                 <input type="text" th:field="*{price}" id="price"
-                       class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required>
+                       class="py-1.5 px-2.5 border-2 border-gray-300 rounded-lg bg-white" required>
             </div>
             <div class="grid grid-cols-2 gap-x-5 gap-y-2.5">
                 <div th:each="option, stat : ${options}" class="flex flex-col gap-2 w-full">
@@ -53,7 +53,7 @@
                            th:text="${option.getName()}"></label>
                     <input type="text" th:value="${optionValues.get(stat.index)}" name="optionValues"
                            th:id="${option.getId()}"
-                           class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required>
+                           class="py-1.5 px-2.5 border-2 border-gray-300 rounded-lg bg-white" required>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
                     class="text-white w-full bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm px-5 py-2.5">
                 Добавить
             </button>
-            <a href="/products"
+            <a th:href="@{/products}"
                class="text-white w-full bg-gray-400 hover:bg-gray-600 font-medium text-center rounded-lg text-sm px-5 py-2.5">
                 Отменить
             </a>

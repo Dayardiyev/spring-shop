@@ -4,10 +4,7 @@ package dayardiyev.shop.controller;
 import dayardiyev.shop.entity.Category;
 import dayardiyev.shop.entity.Option;
 import dayardiyev.shop.entity.Product;
-import dayardiyev.shop.repository.CategoryRepository;
-import dayardiyev.shop.repository.OptionRepository;
-import dayardiyev.shop.repository.ProductRepository;
-import dayardiyev.shop.repository.ValueRepository;
+import dayardiyev.shop.repository.*;
 import dayardiyev.shop.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,15 +13,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Controller
+@RequestMapping(path = "/products")
 public class ProductController {
 
     @Autowired
@@ -42,8 +38,11 @@ public class ProductController {
     @Autowired
     private OptionRepository optionRepository;
 
+    @Autowired
+    private ReviewRepository reviewRepository;
 
-    @GetMapping(path = "/products")
+
+    @GetMapping()
     public String getProducts(
             @RequestParam(required = false) Long categoryId,
             Model model
@@ -57,7 +56,9 @@ public class ProductController {
 //        Pageable pageable = PageRequest.of(page, 10);
 //        Page<Product> productPage = productRepository.findAll(pageable);
 
+
         List<Product> products = productRepository.findAll(sort);
+
         if (categoryId != null) {
             Category category = categoryRepository.findById(categoryId).orElseThrow();
             model.addAttribute("category_name", category.getName());
@@ -74,12 +75,12 @@ public class ProductController {
 
         model.addAttribute("avg", avg);
         model.addAttribute("products", products);
+        model.addAttribute("categories", categoryRepository.findAll());
         model.addAttribute("categoryId", categoryId);
-
         return "products";
     }
 
-    @GetMapping(path = "/products/{id}")
+    @GetMapping(path = "/{id}")
     public String getProduct(
             @PathVariable Long id,
             Model model
@@ -92,7 +93,7 @@ public class ProductController {
         return "product";
     }
 
-    @GetMapping(path = "/products/add")
+    @GetMapping(path = "/add")
     public String createProduct(
             @RequestParam(required = false) Long categoryId,
             Model model) {
@@ -113,7 +114,7 @@ public class ProductController {
         return "add_product";
     }
 
-    @PostMapping(path = "/products/add")
+    @PostMapping(path = "/add")
     public String saveCreatedProduct(
             @RequestParam long categoryId,
             @RequestParam List<String> optionValues,
@@ -122,7 +123,7 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    @GetMapping(path = "/products/edit/{id}")
+    @GetMapping(path = "/edit/{id}")
     public String updateProduct(
             @PathVariable("id") Long id,
             Model model) {
@@ -134,7 +135,7 @@ public class ProductController {
         return "update_product";
     }
 
-    @PostMapping(path = "/products/edit/{id}")
+    @PostMapping(path = "/edit/{id}")
     public String saveUpdatedProduct(
             @RequestParam long productId,
             @RequestParam(required = false) String name,
@@ -144,13 +145,16 @@ public class ProductController {
         return "redirect:/products";
     }
 
-    @GetMapping(path = "/products/delete/{id}")
+    @GetMapping(path = "/delete/{id}")
     public String deleteProduct(
-            @PathVariable("id") Long id
+            @PathVariable("id") Long id,
+            RedirectAttributes ra
     ) {
         Product product = productRepository.findById(id).orElseThrow();
         valueRepository.deleteAll(product.getValues());
+        reviewRepository.deleteAll(product.getReviews());
         productRepository.delete(product);
+        ra.addFlashAttribute("message", "Товар с id: " + id + " был удален");
         return "redirect:/products";
     }
 }

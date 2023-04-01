@@ -14,46 +14,106 @@
     <title>Список товаров</title>
 </head>
 <body>
-<nav class="py-8 ">
-    <div class="container mx-auto flex items-center justify-end gap-6">
-        <div class="flex items-center">
-            <a th:href="@{'products/add'}" th:if="${categoryId == null}"
-               class="text-white font-medium bg-gray-700 hover:bg-gray-600 rounded-xl inline-block py-3 px-6">Добавить</a>
-            <a th:href="@{'products/add?categoryId=' + ${categoryId}}" th:if="${categoryId != null}"
-               class="text-white font-medium bg-gray-700 hover:bg-gray-600 rounded-xl py-3 px-6">Добавить</a>
-        </div>
-        <div class="flex gap-12 text-lg uppercase font-medium" th:if="${user}" th:text="${user.getName()}"></div>
-        <div class="flex gap-12 text-lg uppercase font-medium" th:unless="${user}">Username</div>
+
+<!-- Toast -->
+<div th:if="${message}" id="toast" class="fixed flex gap-4 items-center text-gray-600 font-medium right-10 bg-white z-20 bottom-10 shadow-lg border-2 rounded-md py-6 px-8">
+    <div class="w-10 h-10 flex items-center justify-center rounded-md bg-green-100 text-green-800 text-xl">
+        <i class="fa-solid fa-check"></i>
     </div>
-</nav>
-<!--<h3 class="my-10 text-center text-3xl" th:if="${category_name}" th:text="${category_name}"></h3>-->
-<div class="container mx-auto relative">
+    <p class="text-lg" th:text="${message}"></p>
+    <div id="toastCloseButton" class="w-10 h-10 translate-x-4 cursor-pointer flex items-center justify-center rounded-md hover:bg-gray-200 text-xl hover:text-black">
+        <i class="fa-solid fa-xmark text-xl"></i>
+    </div>
+</div>
+
+<header class="py-12 bg-teal-50">
+    <div class="container mx-auto flex items-center justify-between gap-6">
+
+        <div class="items-center pl-6 font-medium text-3xl">
+            <span th:if="${categoryId == null}"
+                  th:text="'Welcome, ' + ${@userService.getUser().getName()} + ' 👋'"></span>
+            <span th:if="${categoryId != null}"
+                  th:text="${@categoryRepository.findById(categoryId).orElseThrow().getName()}"></span>
+        </div>
+        <div class="pr-6 flex gap-4 items-center">
+            <div class="relative">
+                <div id="dropdownButton"
+                     class="flex gap-6 cursor-pointer items-center border-2 rounded-md bg-white py-2 px-4">
+                    <span>Выбрать категорию</span>
+                    <i class="fa-solid fa-chevron-down text-sm"></i>
+                </div>
+                <!-- Dropdown menu -->
+                <div id="dropdown" class="bg-white rounded-lg shadow absolute w-full z-10">
+                    <ul>
+                        <li th:if="${categoryId != null}">
+                            <a th:href="@{/products}"
+                               class="block px-4 py-2 hover:bg-gray-100 bg-white">Все категории</a>
+                        </li>
+                        <li th:each="category : ${categories}">
+                            <a th:href="@{|products?categoryId=${category.getId()}|}"
+                               class="block px-4 py-2 hover:bg-gray-100 bg-white"
+                               th:text="${category.getName()}"></a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <a th:if="${categoryId == null}"
+               class="text-white text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md py-3 px-5"
+               th:href="@{'products/add'}">
+                <i class="fa-regular text-xs fa-square-plus"></i>
+                Добавить</a>
+            <a th:if="${categoryId != null}"
+               class="text-white text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md py-3 px-5"
+               th:href="@{'products/add?categoryId=' + ${categoryId}}">
+                <i class="fa-regular text-xs fa-square-plus"></i>
+                Добавить</a>
+        </div>
+
+    </div>
+</header>
+<div class="container mx-auto relative mt-4">
     <table class="w-full text-left">
-        <thead class="bg-gray-800 uppercase text-white">
-        <tr class="border-b">
-            <th class="px-6 py-3">#</th>
-            <th class="px-6 py-3">Название</th>
-            <th th:if="${categoryId == null}" class="px-6 py-3">Категория</th>
-            <th class="px-6 py-3">Цена</th>
-            <th class="px-6 py-3"></th>
-            <th class="px-6 py-3"></th>
+        <thead class="text-gray-500">
+        <tr>
+            <th class="px-6 py-4">#</th>
+            <th class="px-6 py-4">Название</th>
+            <th th:if="${categoryId == null}" class="px-6 py-4">Категория</th>
+            <th class="px-6 py-4">Цена</th>
+            <th class="px-4"></th>
+            <th class="px-6"></th>
         </tr>
         </thead>
         <tbody>
-        <tr class="font-medium even:bg-slate-50" th:each="product : ${products}">
-            <td class="px-6 py-3" th:text="${product.getId()}"></td>
-            <td class="px-6 py-3 font-semibold">
-                <a th:href="@{|products/${product.getId()}|}" th:text="${product.getName()}"></a>
+        <tr class="font-medium hover:bg-teal-50" th:each="product : ${products}">
+            <td>
+                <a class="px-6 py-4 block"
+                   th:href="@{|products/${product.getId()}|}"
+                   th:text="${product.getId()}"></a>
             </td>
-            <td th:if="${categoryId == null}" class="px-6 py-3">
-                <a th:href="@{|products?categoryId=${product.getCategory().getId()}|}" th:text="${product.getCategory().getName()}" class="text-gray-700 hover:text-gray-900"></a>
+            <td>
+                <a class="px-6 py-4 block"
+                   th:href="@{|products/${product.getId()}|}"
+                   th:text="${product.getName()}"></a>
             </td>
-            <td class="px-6 py-3 text-gray-500" th:text="${product.getPrice()}"></td>
+            <td th:if="${categoryId == null}" class="text-gray-600">
+                <a class="px-6 py-4 block"
+                   th:href="@{|products/${product.getId()}|}"
+                   th:text="${product.getCategory().getName()}"></a>
+            </td>
+            <td class="text-gray-500">
+                <a class="px-6 py-4 block"
+                   th:href="@{|products/${product.getId()}|}"
+                   th:text="${product.getPrice()}"></a>
+            </td>
             <td class="text-center">
-                <a class="text-blue-600 hover:text-blue-800 text-lg" th:href="@{|/products/edit/${product.getId()}|}"><i class="fa-solid fa-pen-to-square"></i></a>
+                <a class="text-blue-600 hover:text-blue-800 text-lg"
+                   th:href="@{|/products/edit/${product.getId()}|}">
+                    <i class="fa-regular fa-pen-to-square"></i></a>
             </td>
             <td class="text-center">
-                <a class="text-red-600 hover:text-red-800 text-lg" th:href="@{|/products/delete/${product.getId()}|}"><i class="fa-regular fa-trash-can"></i></a>
+                <a class="text-red-600 hover:text-red-800 text-lg"
+                   th:href="@{|/products/delete/${product.getId()}|}">
+                    <i class="fa-regular fa-trash-can"></i></a>
             </td>
         </tr>
         </tbody>
@@ -68,5 +128,35 @@
     body {
         font-family: 'Montserrat', sans-serif;
     }
+
+    #dropdown {
+        display: none;
+    }
+
+    #dropdown.active {
+        display: block;
+    }
 </style>
+
+<script !src="">
+    const dropdown = document.getElementById('dropdown');
+    const dropDownButton = document.getElementById('dropdownButton');
+
+    dropDownButton.addEventListener('click', () => {
+        dropdown.classList.toggle('active')
+    })
+
+    const toast = document.getElementById('toast');
+    const toastCloseButton = document.getElementById('toastCloseButton');
+
+    toastCloseButton.addEventListener('click', () => {
+        toast.classList.add('hidden')
+    })
+
+    setTimeout(() => {
+        if (!toast.classList.contains('hidden')){
+            toast.classList.add('hidden')
+        }
+    }, 7000)
+</script>
 </html>
