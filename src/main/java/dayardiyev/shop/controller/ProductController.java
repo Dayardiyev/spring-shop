@@ -6,6 +6,8 @@ import dayardiyev.shop.entity.Option;
 import dayardiyev.shop.entity.Product;
 import dayardiyev.shop.repository.*;
 import dayardiyev.shop.service.ProductService;
+import dayardiyev.shop.service.ReviewService;
+import dayardiyev.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -40,6 +42,13 @@ public class ProductController {
 
     @Autowired
     private ReviewRepository reviewRepository;
+
+//    ============================
+    @Autowired
+    private ReviewService reviewService;
+
+    @Autowired
+    private UserService userService;
 
 
     @GetMapping()
@@ -88,6 +97,7 @@ public class ProductController {
         Product product = productRepository.findById(id).orElseThrow();
         Category category = product.getCategory();
         List<Option> options = optionRepository.findAllByCategoryOrderById(category);
+        model.addAttribute("reviews", reviewRepository.findAllByProductOrderByIdDesc(product));
         model.addAttribute("product", product);
         model.addAttribute("options", options);
         return "product";

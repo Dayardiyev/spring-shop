@@ -13,7 +13,7 @@ public class UserService {
     private UserRepository userRepository;
 
     public User getUser(){
-        return userRepository.findById(13L).orElseThrow();
+        return userRepository.findById(14L).orElseThrow();
     }
 
 }

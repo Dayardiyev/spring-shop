@@ -1,7 +1,9 @@
 package dayardiyev.shop.service;
 
 
+import dayardiyev.shop.entity.Product;
 import dayardiyev.shop.entity.Review;
+import dayardiyev.shop.entity.User;
 import dayardiyev.shop.repository.ProductRepository;
 import dayardiyev.shop.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,11 @@ public class ReviewService {
 
     @Autowired
     private ReviewRepository reviewRepository;
+
+    public boolean isReviewPresent(Product product, User user){
+        Review review = reviewRepository.findByUserAndProduct(user, product);
+        return review == null;
+    }
 
     public double getAvgRating(long productId){
         List<Review> reviews = productRepository.findById(productId).orElseThrow().getReviews();

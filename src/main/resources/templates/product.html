@@ -56,12 +56,12 @@
             Отзывы
             (<span th:text="${product.getReviews().size()}"></span>)
         </p>
-        <div class="mb-5">
+        <div th:if="${@reviewService.isReviewPresent(product, @userService.getUser())}" class="mb-5">
             <a id="review-button" class="text-blue-600 hover:underline cursor-pointer 2xl:text-lg font-medium">
                 Оставить отзыв</a>
         </div>
         <div class="border-b w-full p-6 last:border-none shadow-lg bg-white rounded-lg mb-5 grid gap-2"
-             th:each="review : ${product.getReviews()}">
+             th:each="review : ${reviews}">
             <div class="flex relative items-center">
                 <div class="text-lg 2xl:text-2xl font-medium mr-2.5"
                      th:text="${review.getUser().getName()} + ' ' + ${review.getUser().getLastname()}"></div>
@@ -84,7 +84,7 @@
     <!-- Review Modal -->
     <div id="review-modal" class="modal fixed top-0 right-0 h-full w-full items-center justify-center bg-black/80">
         <div id="review-overlay" class="absolute z-1 h-full w-full"></div>
-        <form th:action="@{/publish_review}" method="post"
+        <form  th:action="@{/publish_review}" method="post"
               class="h-min bg-white px-10 py-12 rounded-3xl shadow-lg z-50 grid gap-4">
             <input type="hidden" name="user_id" th:value="${@userService.getUser().getId()}">
             <input type="hidden" name="product_id" th:value="${product.getId()}">
