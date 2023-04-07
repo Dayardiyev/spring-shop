@@ -26,7 +26,7 @@ public class ReviewService {
 
     public boolean isReviewPresent(Product product, User user){
         Review review = reviewRepository.findByUserAndProduct(user, product);
-        return review == null;
+        return review != null;
     }
 
     public double getAvgRating(long productId){
@@ -39,6 +39,14 @@ public class ReviewService {
             avg = avg / reviews.size();
         }
         return avg;
+    }
+
+    public String getReviewDate(LocalDateTime date){
+        return date.getDayOfMonth() + " "
+                + getMonthOnRus(date) + " "
+                + date.getYear() + " г. в "
+                + date.getHour() + ":"
+                + date.getMinute();
     }
 
     public String getMonthOnRus(LocalDateTime date){

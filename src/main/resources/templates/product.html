@@ -56,35 +56,43 @@
             Отзывы
             (<span th:text="${product.getReviews().size()}"></span>)
         </p>
-        <div th:if="${@reviewService.isReviewPresent(product, @userService.getUser())}" class="mb-5">
+        <div class="mb-5">
             <a id="review-button" class="text-blue-600 hover:underline cursor-pointer 2xl:text-lg font-medium">
                 Оставить отзыв</a>
         </div>
         <div class="border-b w-full p-6 last:border-none shadow-lg bg-white rounded-lg mb-5 grid gap-2"
              th:each="review : ${reviews}">
-            <div class="flex relative items-center">
-                <div class="text-lg 2xl:text-2xl font-medium mr-2.5"
-                     th:text="${review.getUser().getName()} + ' ' + ${review.getUser().getLastname()}"></div>
-                <div class="text-yellow-400 2xl:text-lg">
-                    <i th:each="i : ${#numbers.sequence(1, review.getRating())}" class="fa-solid fa-star"></i><!--
+            <div class="flex flex-col relative justify-center">
+                <a th:href="@{|/review/delete/${review.getId()}|}" th:if="${review.getUser() == @userService.getUser()}"
+                   class="absolute right-0 top-0 text-red-600 hover:text-red-800 text-lg 2xl:text-xl cursor-pointer"><i class="fa-regular fa-trash-can"></i></a>
+                <p class="text-lg 2xl:text-2xl font-medium mr-2.5"
+                     th:text="${review.getUser().getName()} + ' ' + ${review.getUser().getLastname()}"></p>
+                <div class="flex gap-2 items-center text-gray-600 font-medium 2xl:text-md">
+                    <div class="text-yellow-400">
+                        <i th:each="i : ${#numbers.sequence(1, review.getRating())}"
+                           class="fa-solid fa-star"></i><!--
                     --><i th:if="${review.getRating() < 5}"
                           th:each="i : ${#numbers.sequence(review.getRating(), 4)}"
                           class="fa-regular fa-star"></i>
-                </div>
-                <div class="absolute right-0 font-medium">
-                    <span th:text="${#temporals.day(review.getCreated_at())}"></span>
-                    <span th:text="${@reviewService.getMonthOnRus(review.getCreated_at())}"></span>
-                    <span th:text="${#temporals.year(review.getCreated_at())}"></span>
+                    </div>
+                    <div>
+                        <span th:text="${@reviewService.getReviewDate(review.getCreated_at())}"></span>
+                    </div>
                 </div>
             </div>
-            <p class="text-gray-700 font-medium 2xl:text-lg" th:text="${review.getText()}"></p>
+            <p class="text-gray-800 font-medium 2xl:text-lg" th:text="${review.getText()}"></p>
         </div>
     </div>
 
     <!-- Review Modal -->
     <div id="review-modal" class="modal fixed top-0 right-0 h-full w-full items-center justify-center bg-black/80">
         <div id="review-overlay" class="absolute z-1 h-full w-full"></div>
-        <form  th:action="@{/publish_review}" method="post"
+        <div th:if="${@reviewService.isReviewPresent(product, @userService.getUser())}"
+             class="h-min bg-white px-10 py-12 rounded-3xl shadow-lg z-50 grid gap-4">
+            <p class="text-2xl font-medium">Вы уже ранее оставляли отзыв на этот товар</p>
+        </div>
+        <form th:unless="${@reviewService.isReviewPresent(product, @userService.getUser())}"
+              th:action="@{/publish_review}" method="post"
               class="h-min bg-white px-10 py-12 rounded-3xl shadow-lg z-50 grid gap-4">
             <input type="hidden" name="user_id" th:value="${@userService.getUser().getId()}">
             <input type="hidden" name="product_id" th:value="${product.getId()}">
