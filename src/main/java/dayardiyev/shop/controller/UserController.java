@@ -1,9 +1,13 @@
 package dayardiyev.shop.controller;
 
 
+import dayardiyev.shop.entity.OrderProduct;
 import dayardiyev.shop.entity.User;
 import dayardiyev.shop.entity.enumiration.Role;
+import dayardiyev.shop.repository.OrderProductRepository;
+import dayardiyev.shop.repository.OrderRepository;
 import dayardiyev.shop.repository.UserRepository;
+import dayardiyev.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +24,15 @@ public class UserController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private OrderProductRepository orderProductRepository;
 
     @GetMapping(path = "/")
     public String showUserSignIn() {
@@ -63,6 +76,13 @@ public class UserController {
         User user = userRepository.findById(userId).orElseThrow();
         model.addAttribute("user", user);
         return "user_information";
+    }
+
+    @GetMapping("/user/orders")
+    public String userOrderListPage(Model model){
+        model.addAttribute("orders", orderRepository.findAllByUserOrderById(userService.getUser()));
+        model.addAttribute("items", orderProductRepository.findAll());
+        return "user_order_list";
     }
 
 }

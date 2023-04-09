@@ -43,10 +43,14 @@
                       th:text="${@productService.findValueByProductAndOption(product, option)}"></span>
             </div>
             <div class="flex justify-center mt-12 2xl:mt-16">
-                <button id="cart-button"
-                        class="text-white bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-lg 2xl:text-2xl px-8 py-3.5 2xl:px-12 2xl:py-5">
-                    В корзину
-                </button>
+                <form th:action="@{/add_item}" method="post">
+                    <input type="hidden" name="productId" th:value="${product.getId()}">
+                    <input type="hidden" name="userId" th:value="${@userService.getUser().getId()}">
+                    <button type="submit" id="cart-button"
+                            class="text-white bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-lg 2xl:text-2xl px-8 py-3.5 2xl:px-12 2xl:py-5">
+                        В корзину
+                    </button>
+                </form>
             </div>
         </div>
     </div>
@@ -66,7 +70,7 @@
                 <a th:href="@{|/review/delete/${review.getId()}|}" th:if="${review.getUser() == @userService.getUser()}"
                    class="absolute right-0 top-0 text-red-600 hover:text-red-800 text-lg 2xl:text-xl cursor-pointer"><i class="fa-regular fa-trash-can"></i></a>
                 <p class="text-lg 2xl:text-2xl font-medium mr-2.5"
-                     th:text="${review.getUser().getName()} + ' ' + ${review.getUser().getLastname()}"></p>
+                   th:text="${review.getUser().getName()} + ' ' + ${review.getUser().getLastname()}"></p>
                 <div class="flex gap-2 items-center text-gray-600 font-medium 2xl:text-md">
                     <div class="text-yellow-400">
                         <i th:each="i : ${#numbers.sequence(1, review.getRating())}"
@@ -145,7 +149,7 @@
     </div>
 
     <!--  Add to cart Modal  -->
-    <div id="cart-modal" class="modal fixed top-0 right-0 h-full w-full items-center justify-center bg-black/80">
+    <div th:if="${message}" id="cart-modal" class="flex fixed top-0 right-0 h-full w-full items-center justify-center bg-black/80">
         <div id="cart-overlay" class="absolute z-1 h-full w-full"></div>
         <div class="grid gap-6 text-center h-min w-1/4 bg-white px-10 py-12 rounded-3xl shadow-lg z-50">
             <i class="fa-regular fa-circle-check text-5xl text-blue-600"></i>

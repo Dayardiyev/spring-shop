@@ -73,4 +73,9 @@ public class ProductService {
         Value value = valueRepository.findByProductAndOption(product, option);
         return value != null ? value.getValue() : "";
     }
+
+    public String getFirstOption(Product product){
+        List<Option> options = optionRepository.findAllByCategoryOrderById(product.getCategory());
+        return options.get(0).getName();
+    }
 }

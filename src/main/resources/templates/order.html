@@ -1,0 +1,58 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
+          rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+    <title>Корзина</title>
+</head>
+<body>
+<header class="py-12">
+    <div class="container mx-auto flex items-center gap-4 text-gray-700">
+        <a th:href="@{/products}" class="hover:text-blue-700">Главная</a>
+        <i class="fa-solid fa-chevron-right text-[8px]"></i>
+        <a th:href="@{/cart}" class="hover:text-blue-700">Корзина</a>
+        <i class="fa-solid fa-chevron-right text-[8px]"></i>
+        <span class="text-blue-600">Доставка</span>
+    </div>
+</header>
+
+<div class="container h-full mx-auto flex flex-col">
+
+    <div class="mt-9 mb-6">
+        <p class="text-2xl font-medium">Доставка</p>
+    </div>
+
+    <form th:action="@{/cart/order}" method="post"
+          class="">
+        <div class="flex flex-col w-1/4 mx-auto gap-2">
+            <label class="font-medium text-gray">Адрес</label>
+            <input type="text" name="address"
+                   class="py-1.5 px-2.5 border-2 border-gray-300 rounded-lg bg-white" required>
+        </div>
+        <div class="text-right pr-6 text-xl">
+            <span>Итого к оплате:</span>
+            <span th:text="${@cartItemService.getTotalPrice(cartItems)}" class="font-medium"></span>
+        </div>
+        <button type="submit"
+                class="text-white bg-blue-600 hover:bg-blue-800
+                 mt-5 font-medium rounded-lg text-sm 2xl:text-md px-5 py-2.5 float-right">
+            Оформить заказ
+        </button>
+    </form>
+</div>
+
+</body>
+<style>
+    body {
+        font-family: 'Montserrat', sans-serif;
+    }
+</style>
+</html>

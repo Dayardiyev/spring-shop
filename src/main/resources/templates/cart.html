@@ -10,11 +10,78 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
           rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
     <title>Корзина</title>
 </head>
-<body class="h-[100vh] bg-gray-100">
-<div class="container h-full mx-auto flex justify-center items-center">
-    <p class="text-5xl">Корзина</p>
+<body>
+<header class="py-12">
+    <div class="container mx-auto flex items-center gap-4 text-gray-700">
+        <a th:href="@{/products}" class="hover:text-blue-700">Главная</a>
+        <i class="fa-solid fa-chevron-right text-[8px]"></i>
+        <span class="text-blue-600">Корзина</span>
+    </div>
+</header>
+
+<div class="container h-full mx-auto flex flex-col">
+
+    <div class="mt-9 mb-6 flex justify-between pr-6">
+        <div class="text-2xl font-medium">Корзина
+            <span th:text="${@cartItemService.cartAmount()}"></span>
+        </div>
+        <form th:action="@{/cart/remove_all}" method="get">
+            <button type="submit" class="text-blue-600 hover:underline">Очистить корзину</button>
+        </form>
+    </div>
+
+    <table class="w-full text-left bg-white">
+        <thead class="text-gray-500">
+        <tr>
+            <th class="pr-6 py-4">Название</th>
+            <th class="px-4 text-center">Кол-во</th>
+            <th class="px-6 py-4 text-right">Цена</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr class="font-medium border-b last:border-0" th:each="item : ${items}">
+            <td class="pr-6 py-4 flex flex-col gap-2">
+                <a href="#"
+                   class="text-lg"
+                   th:text="${item.getProduct().getName()}"></a>
+                <div class="flex gap-4">
+                    <form th:action="@{/cart/remove}" method="get">
+                        <input type="hidden" name="id" th:value="${item.getId()}">
+                        <button type="submit" class="text-blue-600 hover:underline">Удалить из корзины</button>
+                    </form>
+                </div>
+            </td>
+            <td>
+                <div class="flex justify-center items-center gap-1 text-lg">
+                    <form th:action="@{/decrease_amount}" method="get">
+                        <input type="hidden" name="cartItemId" th:value="${item.getId()}">
+                        <button type="submit">-</button>
+                    </form>
+                    <span th:text="${item.getAmount()}"></span>
+                    <form th:action="@{/increase_amount}" method="get">
+                        <input type="hidden" name="cartItemId" th:value="${item.getId()}">
+                        <button type="submit">+</button>
+                    </form>
+                </div>
+            </td>
+            <td class="px-6 py-4 text-right text-lg"
+                th:text="${item.product.getPrice()}">
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="text-right pr-6 text-xl">
+        <span>Итого к оплате:</span>
+        <span th:text="${totalPrice}" class="font-medium"></span>
+    </div>
+    <div class="text-right pr-6 pt-3">
+        <a th:if="${@cartItemService.getAmountOfCartItems(@userService.getUser()) >= 1}" th:href="@{/cart/order}" class="text-white bg-blue-600 hover:bg-blue-800 mt-5 font-medium rounded-lg text-sm 2xl:text-md px-5 py-2.5">
+            Оформить заказ
+        </a>
+    </div>
 </div>
 
 </body>

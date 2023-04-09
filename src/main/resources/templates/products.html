@@ -11,6 +11,7 @@
           rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+    <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
     <title>Список товаров</title>
 </head>
 <body>
@@ -57,16 +58,21 @@
                     </ul>
                 </div>
             </div>
-            <a th:if="${categoryId == null}"
-               class="text-white text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md py-3 px-5"
-               th:href="@{'products/add'}">
-                <i class="fa-regular text-xs fa-square-plus"></i>
-                Добавить</a>
-            <a th:if="${categoryId != null}"
-               class="text-white text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md py-3 px-5"
-               th:href="@{'products/add?categoryId=' + ${categoryId}}">
-                <i class="fa-regular text-xs fa-square-plus"></i>
-                Добавить</a>
+            <a class="text-gray-600 font-medium hover:text-black text-2xl"
+               th:href="@{/cart}">
+                <span class="iconify" data-icon="ph:shopping-cart-simple" data-width="40" data-height="40"></span></a>
+            <div th:if="${@userService.isAdminOrModer(@userService.getUser())}">
+                <a th:if="${categoryId == null}"
+                   class="text-white text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md py-3 px-5"
+                   th:href="@{/products/add}">
+                    <i class="fa-regular text-xs fa-square-plus"></i>
+                    Добавить</a>
+                <a th:if="${categoryId != null}"
+                   class="text-white text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md py-3 px-5"
+                   th:href="@{'products/add?categoryId=' + ${categoryId}}">
+                    <i class="fa-regular text-xs fa-square-plus"></i>
+                    Добавить</a>
+            </div>
         </div>
 
     </div>
