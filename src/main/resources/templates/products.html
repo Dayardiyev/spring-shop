@@ -14,15 +14,17 @@
     <script src="https://code.iconify.design/2/2.2.1/iconify.min.js"></script>
     <title>Список товаров</title>
 </head>
-<body>
+<body class="min-w-[1349px]">
 
 <!-- Toast -->
-<div th:if="${message}" id="toast" class="fixed flex gap-4 items-center text-gray-600 font-medium right-10 bg-white z-20 bottom-10 shadow-lg border-2 rounded-md py-6 px-8">
+<div th:if="${message}" id="toast"
+     class="fixed flex gap-4 items-center text-gray-600 font-medium right-10 bg-white z-20 bottom-10 shadow-lg border-2 rounded-md py-6 px-8">
     <div class="w-10 h-10 flex items-center justify-center rounded-md bg-green-100 text-green-800 text-xl">
         <i class="fa-solid fa-check"></i>
     </div>
     <p class="text-lg" th:text="${message}"></p>
-    <div id="toastCloseButton" class="w-10 h-10 translate-x-4 cursor-pointer flex items-center justify-center rounded-md hover:bg-gray-200 text-xl hover:text-black">
+    <div id="toastCloseButton"
+         class="w-10 h-10 translate-x-4 cursor-pointer flex items-center justify-center rounded-md hover:bg-gray-200 text-xl hover:text-black">
         <i class="fa-solid fa-xmark text-xl"></i>
     </div>
 </div>
@@ -36,43 +38,80 @@
             <span th:if="${categoryId != null}"
                   th:text="${@categoryRepository.findById(categoryId).orElseThrow().getName()}"></span>
         </div>
-        <div class="pr-6 flex gap-4 items-center">
+        <div class="pr-9 flex gap-12 items-center">
             <div class="relative">
-                <div id="dropdownButton"
-                     class="flex gap-6 cursor-pointer items-center border-2 rounded-md bg-white py-2 px-4">
-                    <span>Выбрать категорию</span>
+                <div id="categoryDropdownButton"
+                     class="flex cursor-pointer items-center gap-1 text-gray-700 hover:text-black font-medium">
+                    <span>Категория</span>
                     <i class="fa-solid fa-chevron-down text-sm"></i>
                 </div>
                 <!-- Dropdown menu -->
-                <div id="dropdown" class="bg-white rounded-lg shadow absolute w-full z-10">
+                <div id="categoryDropdown" class="bg-white rounded-lg font-medium shadow min-w-[155px] absolute w-full z-10">
                     <ul>
                         <li th:if="${categoryId != null}">
                             <a th:href="@{/products}"
-                               class="block px-4 py-2 hover:bg-gray-100 bg-white">Все категории</a>
+                               class="block px-4 py-2 hover:bg-gray-100">Все категории</a>
                         </li>
                         <li th:each="category : ${categories}">
                             <a th:href="@{|products?categoryId=${category.getId()}|}"
-                               class="block px-4 py-2 hover:bg-gray-100 bg-white"
+                               class="block px-4 py-2 hover:bg-gray-100"
                                th:text="${category.getName()}"></a>
                         </li>
                     </ul>
                 </div>
             </div>
-            <a class="text-gray-600 font-medium hover:text-black text-2xl"
-               th:href="@{/cart}">
-                <span class="iconify" data-icon="ph:shopping-cart-simple" data-width="40" data-height="40"></span></a>
-            <div th:if="${@userService.isAdminOrModer(@userService.getUser())}">
-                <a th:if="${categoryId == null}"
-                   class="text-white text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md py-3 px-5"
-                   th:href="@{/products/add}">
-                    <i class="fa-regular text-xs fa-square-plus"></i>
-                    Добавить</a>
-                <a th:if="${categoryId != null}"
-                   class="text-white text-sm font-medium bg-blue-600 hover:bg-blue-700 rounded-md py-3 px-5"
-                   th:href="@{'products/add?categoryId=' + ${categoryId}}">
-                    <i class="fa-regular text-xs fa-square-plus"></i>
-                    Добавить</a>
+            <div class="relative">
+                <div id="userDropdownButton"
+                     class="flex cursor-pointer items-center gap-1 text-gray-700 hover:text-black font-medium">
+                    <span th:text="${@userService.getUser().getName()}"></span>
+                    <i class="fa-solid fa-chevron-down text-sm"></i>
+                </div>
+                <!-- Dropdown menu -->
+                <div id="userDropdown"
+                     class="bg-white rounded-lg font-medium shadow absolute min-w-[150px] right-0 z-10">
+                    <ul>
+                        <li>
+                            <a class="block px-5 py-2 hover:bg-gray-100"
+                               th:href="@{/user/orders}">Мои заказы</a>
+                        </li>
+                        <li>
+                            <a class="block px-5 py-2 hover:bg-gray-100"
+                               th:href="@{/user/reviews}">Мои отзывы</a>
+                        </li>
+                        <li class="block px-5 pt-3.5 pb-2 border-t hover:bg-gray-100 text-red-600">Выйти</li>
+                    </ul>
+                </div>
             </div>
+            <div th:if="${@userService.isAdminOrModer(@userService.getUser())}" class="relative">
+                <div id="adminDropdownButton"
+                     class="flex cursor-pointer items-center gap-1 text-gray-700 hover:text-black font-medium">
+                    <span th:text="${@userService.getUser().getRole().getServiceName()}"></span>
+                    <i class="fa-solid fa-chevron-down text-sm"></i>
+                </div>
+                <!-- Dropdown menu -->
+                <div id="adminDropdown"
+                     class="bg-white rounded-lg font-medium shadow absolute min-w-[100px] right-0 z-10">
+                    <ul>
+                        <li>
+                            <a class="block px-5 py-2 hover:bg-gray-100"
+                               th:href="@{/admin/orders}">Заказы</a>
+                        </li>
+                        <li>
+                            <a class="block px-5 py-2 hover:bg-gray-100"
+                               th:href="@{/admin/reviews}">Отзывы</a>
+                        </li>
+                        <li>
+                            <a class="block border-t px-5 pt-3.5 pb-2 hover:bg-gray-100 text-blue-600"
+                               th:href="@{/products/add}">
+                                Добавить</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <a class="text-gray-700 hover:text-black font-medium text-2xl"
+               th:href="@{/cart}">
+                <span class="iconify" data-icon="solar:bag-3-linear" data-width="40" data-height="40"></span>
+            </a>
         </div>
 
     </div>
@@ -85,8 +124,8 @@
             <th class="px-6 py-4">Название</th>
             <th th:if="${categoryId == null}" class="px-6 py-4">Категория</th>
             <th class="px-6 py-4">Цена</th>
-            <th class="px-4"></th>
-            <th class="px-6"></th>
+            <th th:if="${@userService.isAdminOrModer(@userService.getUser())}" class="px-4"></th>
+            <th th:if="${@userService.isAdminOrModer(@userService.getUser())}" class="px-6"></th>
         </tr>
         </thead>
         <tbody>
@@ -111,12 +150,12 @@
                    th:href="@{|products/${product.getId()}|}"
                    th:text="${product.getPrice()}"></a>
             </td>
-            <td class="text-center">
+            <td th:if="${@userService.isAdminOrModer(@userService.getUser())}" class="text-center">
                 <a class="text-blue-600 hover:text-blue-800 text-lg"
                    th:href="@{|/products/edit/${product.getId()}|}">
                     <i class="fa-regular fa-pen-to-square"></i></a>
             </td>
-            <td class="text-center">
+            <td th:if="${@userService.isAdminOrModer(@userService.getUser())}" class="text-center">
                 <a class="text-red-600 hover:text-red-800 text-lg"
                    th:href="@{|/products/delete/${product.getId()}|}">
                     <i class="fa-regular fa-trash-can"></i></a>
@@ -135,23 +174,45 @@
         font-family: 'Montserrat', sans-serif;
     }
 
-    #dropdown {
+    #categoryDropdown, #userDropdown, #adminDropdown {
         display: none;
     }
 
-    #dropdown.active {
+    #categoryDropdown.active, #userDropdown.active, #adminDropdown.active {
         display: block;
     }
 </style>
 
 <script !src="">
-    const dropdown = document.getElementById('dropdown');
-    const dropDownButton = document.getElementById('dropdownButton');
+    const categoryDropdown = document.getElementById('categoryDropdown');
+    const categoryDropdownButton = document.getElementById('categoryDropdownButton');
 
-    dropDownButton.addEventListener('click', () => {
-        dropdown.classList.toggle('active')
+    const userDropdown = document.getElementById('userDropdown');
+    const userDropdownButton = document.getElementById('userDropdownButton');
+
+    const adminDropdown = document.getElementById('adminDropdown');
+    const adminDropdownButton = document.getElementById('adminDropdownButton');
+
+    categoryDropdownButton.addEventListener('click', () => {
+        userDropdown.classList.remove('active')
+        if (adminDropdown != null) adminDropdown.classList.remove('active')
+        categoryDropdown.classList.toggle('active')
     })
 
+    userDropdownButton.addEventListener('click', () => {
+        categoryDropdown.classList.remove('active')
+        if (adminDropdown != null) adminDropdown.classList.remove('active')
+        userDropdown.classList.toggle('active')
+    })
+
+    adminDropdownButton.addEventListener('click', () => {
+        categoryDropdown.classList.remove('active')
+        userDropdown.classList.remove('active')
+        adminDropdown.classList.toggle('active')
+    })
+
+
+    // Toast Notifier
     const toast = document.getElementById('toast');
     const toastCloseButton = document.getElementById('toastCloseButton');
 
@@ -160,7 +221,7 @@
     })
 
     setTimeout(() => {
-        if (!toast.classList.contains('hidden')){
+        if (!toast.classList.contains('hidden')) {
             toast.classList.add('hidden')
         }
     }, 7000)

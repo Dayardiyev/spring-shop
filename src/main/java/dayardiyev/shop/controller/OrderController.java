@@ -22,7 +22,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
-@RequestMapping("/cart/order")
 public class OrderController {
 
     @Autowired
@@ -37,13 +36,13 @@ public class OrderController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
+    @GetMapping(path = "/order")
     public String orderPage(Model model){
         model.addAttribute("cartItems", cartItemRepository.findAllByUserOrderById(userService.getUser()));
         return "order";
     }
 
-    @PostMapping
+    @PostMapping(path = "/order")
     public String addOrder(
             @RequestParam String address
     ){
@@ -63,5 +62,26 @@ public class OrderController {
         }
         cartItemRepository.deleteAllByUser(userService.getUser());
         return "redirect:/user/orders";
+    }
+
+    @GetMapping("/admin/orders")
+    public String getOrdersAsAdminOrModer(Model model){
+        if (userService.isAdminOrModer(userService.getUser())){
+            model.addAttribute("orders", orderRepository.findAllByOrderById());
+            return "admin_orders";
+        }
+        return "redirect:/products";
+    }
+
+
+    @GetMapping("/admin/orders/change_status")
+    public String changeStatus(
+            @RequestParam long orderId,
+            @RequestParam Status status
+    ){
+        Order order = orderRepository.findById(orderId).orElseThrow();
+        order.setStatus(status);
+        orderRepository.save(order);
+        return "redirect:/admin/orders";
     }
 }

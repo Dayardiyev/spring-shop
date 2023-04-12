@@ -11,28 +11,31 @@
           rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
-    <title>Корзина</title>
+    <title>Заказы пользователей</title>
 </head>
 <body>
 <header class="py-12">
-    <div class="container mx-auto flex items-center gap-4 text-gray-700">
+    <div class="container mx-auto flex items-center gap-5 text-gray-700 font-medium">
         <a th:href="@{/products}" class="hover:text-blue-700">Главная</a>
-        <i class="fa-solid fa-chevron-right text-[8px]"></i>
-        <span class="text-blue-600">Заказы</span>
+        <i class="fa-solid fa-caret-right text-sm"></i>
+        <span>Администратор/Модератор</span>
+        <i class="fa-solid fa-caret-right text-sm"></i>
+        <span class="text-blue-600">Заказы пользователей</span>
     </div>
 </header>
 
 <div class="container h-full mx-auto flex flex-col">
 
     <div class="mt-9 mb-6">
-        <p class="text-2xl font-medium">Ваши Заказы</p>
+        <p class="text-2xl font-medium">Заказы пользователей</p>
     </div>
 
     <table class="w-full text-left bg-white">
         <thead class="text-gray-500">
         <tr>
             <th class="pr-6 py-4">Товары</th>
-            <th class="px-4 text-center">Статус</th>
+            <th class="pr-6 py-4">Пользователь</th>
+            <th class="px-4 py-4">Статус</th>
             <th class="px-6 py-4 text-right">Дата оформление</th>
         </tr>
         </thead>
@@ -45,8 +48,19 @@
                     <span class="text-gray-600 font-light" th:text="'x' + ${orderProduct.getAmount()}"></span>
                 </span>
             </td>
-            <td class="text-center">
-                <span th:text="${order.getStatus().getDisplayStatusName()}"></span>
+            <td th:text="${order.getUser().getName()}"></td>
+            <td class="px-4 py-4">
+                <form th:action="@{/admin/orders/change_status}" method="get">
+                    <input type="hidden" name="orderId" th:value="${order.getId()}">
+                    <select name="status" id="status" onchange="this.form.submit()"
+                            class="bg-white cursor-pointer">
+                        <option th:text="${order.getStatus().getDisplayStatusName()}"
+                                class="hidden" selected></option>
+                        <option th:each="status : ${@orderService.getStatuses()}"
+                                th:text="${status.getDisplayStatusName()}"
+                        th:value="${status}"></option>
+                    </select>
+                </form>
             </td>
             <td class="px-6 py-4 text-right text-lg"
                 th:text="${@reviewService.getReviewDate(order.getCreated_at())}">

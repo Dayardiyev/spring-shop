@@ -2,6 +2,7 @@ package dayardiyev.shop.service;
 
 
 import dayardiyev.shop.entity.CartItem;
+import dayardiyev.shop.entity.Product;
 import dayardiyev.shop.entity.User;
 import dayardiyev.shop.repository.CartItemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class CartItemService {
 
     public String cartAmount(){
         int amount = getAmountOfCartItems(userService.getUser());
-        if (amount > 1) return "(" + amount + " товара)";
+        if (amount >= 2) return "(" + amount + " товара)";
         else if (amount == 1) return "(" + amount + " товар)";
         else return "";
     }
@@ -31,6 +32,14 @@ public class CartItemService {
             for (int i = 0; i < cartItem.getAmount(); i++) {
                 total += cartItem.getProduct().getPrice();
             }
+        }
+        return total;
+    }
+
+    public int getPrice(CartItem cartItem){
+        int total = 0;
+        for (int i = 0; i < cartItem.getAmount(); i++) {
+            total += cartItem.getProduct().getPrice();
         }
         return total;
     }

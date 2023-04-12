@@ -29,8 +29,13 @@ public class ReviewService {
         return review != null;
     }
 
+    public int getPublishedReviewsSize(Product product){
+        return reviewRepository.findAllPublishedReviews(product).size();
+    }
+
     public double getAvgRating(long productId){
-        List<Review> reviews = productRepository.findById(productId).orElseThrow().getReviews();
+        Product product = productRepository.findById(productId).orElseThrow();
+        List<Review> reviews = reviewRepository.findAllPublishedReviews(product);
         double avg = 0;
         if (!reviews.isEmpty()){
             for (Review review : reviews){
@@ -46,7 +51,7 @@ public class ReviewService {
                 + getMonthOnRus(date) + " "
                 + date.getYear() + " г. в "
                 + date.getHour() + ":"
-                + date.getMinute();
+                + String.format("%02d", date.getMinute());
     }
 
     public String getMonthOnRus(LocalDateTime date){

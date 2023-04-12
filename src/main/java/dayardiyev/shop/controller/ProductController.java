@@ -9,9 +9,6 @@ import dayardiyev.shop.service.ProductService;
 import dayardiyev.shop.service.ReviewService;
 import dayardiyev.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -97,7 +94,7 @@ public class ProductController {
         Product product = productRepository.findById(id).orElseThrow();
         Category category = product.getCategory();
         List<Option> options = optionRepository.findAllByCategoryOrderById(category);
-        model.addAttribute("reviews", reviewRepository.findAllByProductOrderByIdDesc(product));
+        model.addAttribute("reviews", reviewRepository.findAllPublishedReviews(product));
         model.addAttribute("product", product);
         model.addAttribute("options", options);
         return "product";
@@ -121,7 +118,7 @@ public class ProductController {
         }
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("product", new Product());
-        return "add_product";
+        return "product_add";
     }
 
     @PostMapping(path = "/add")
@@ -142,7 +139,7 @@ public class ProductController {
         List<Option> options = optionRepository.findAllByCategoryOrderById(product.getCategory());
         model.addAttribute("product", product);
         model.addAttribute("options", options);
-        return "update_product";
+        return "product_update";
     }
 
     @PostMapping(path = "/edit/{id}")
