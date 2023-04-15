@@ -62,7 +62,7 @@
                 </form>
             </td>
             <td class="px-6 py-4 text-right text-lg"
-                th:text="${@reviewService.getReviewDate(order.getCreated_at())}">
+                th:text="${@orderService.getOrderDate(order.getCreated_at())}">
             </td>
         </tr>
         </tbody>

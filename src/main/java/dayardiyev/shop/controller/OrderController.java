@@ -8,14 +8,12 @@ import dayardiyev.shop.entity.enumiration.Status;
 import dayardiyev.shop.repository.CartItemRepository;
 import dayardiyev.shop.repository.OrderProductRepository;
 import dayardiyev.shop.repository.OrderRepository;
-import dayardiyev.shop.service.CartItemService;
 import dayardiyev.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDateTime;
@@ -62,6 +60,13 @@ public class OrderController {
         }
         cartItemRepository.deleteAllByUser(userService.getUser());
         return "redirect:/user/orders";
+    }
+
+    @GetMapping("/user/orders")
+    public String userOrderListPage(Model model){
+        model.addAttribute("orders", orderRepository.findAllByUserOrderByIdDesc(userService.getUser()));
+        model.addAttribute("items", orderProductRepository.findAll());
+        return "user_orders";
     }
 
     @GetMapping("/admin/orders")

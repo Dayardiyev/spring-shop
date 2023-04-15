@@ -49,9 +49,7 @@ public class ReviewService {
     public String getReviewDate(LocalDateTime date){
         return date.getDayOfMonth() + " "
                 + getMonthOnRus(date) + " "
-                + date.getYear() + " г. в "
-                + date.getHour() + ":"
-                + String.format("%02d", date.getMinute());
+                + date.getYear();
     }
 
     public String getMonthOnRus(LocalDateTime date){

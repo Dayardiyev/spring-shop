@@ -13,7 +13,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     List<Review> findAllByProductOrderByIdDesc(Product product);
 
-    List<Review> findAllByUserOrderById(User user);
+    List<Review> findAllByUserOrderByIdDesc(User user);
 
     @Query("select r from Review r where r.isPublished = true and r.product = ?1 order by r.id desc ")
     List<Review> findAllPublishedReviews(Product product);

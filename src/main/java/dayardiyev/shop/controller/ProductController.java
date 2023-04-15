@@ -6,8 +6,6 @@ import dayardiyev.shop.entity.Option;
 import dayardiyev.shop.entity.Product;
 import dayardiyev.shop.repository.*;
 import dayardiyev.shop.service.ProductService;
-import dayardiyev.shop.service.ReviewService;
-import dayardiyev.shop.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
@@ -40,13 +38,6 @@ public class ProductController {
     @Autowired
     private ReviewRepository reviewRepository;
 
-//    ============================
-    @Autowired
-    private ReviewService reviewService;
-
-    @Autowired
-    private UserService userService;
-
 
     @GetMapping()
     public String getProducts(
@@ -58,12 +49,7 @@ public class ProductController {
                 Sort.Order.asc("id")
         );
 
-//        if (page == null) page = 0;
-//        Pageable pageable = PageRequest.of(page, 10);
-//        Page<Product> productPage = productRepository.findAll(pageable);
-
-
-        List<Product> products = productRepository.findAll(sort);
+        List<Product> products = productRepository.findAll(sort);;
 
         if (categoryId != null) {
             Category category = categoryRepository.findById(categoryId).orElseThrow();
@@ -90,7 +76,7 @@ public class ProductController {
     public String getProduct(
             @PathVariable Long id,
             Model model
-    ){
+    ) {
         Product product = productRepository.findById(id).orElseThrow();
         Category category = product.getCategory();
         List<Option> options = optionRepository.findAllByCategoryOrderById(category);
@@ -125,8 +111,10 @@ public class ProductController {
     public String saveCreatedProduct(
             @RequestParam long categoryId,
             @RequestParam List<String> optionValues,
-            Product product) {
+            Product product,
+            RedirectAttributes ra) {
         productService.addProduct(categoryId, product, optionValues);
+        ra.addFlashAttribute("message", "Товар был успешно добавлен");
         return "redirect:/products";
     }
 
@@ -147,8 +135,10 @@ public class ProductController {
             @RequestParam long productId,
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer price,
-            @RequestParam(required = false) List<String> updatedValues) {
+            @RequestParam(required = false) List<String> updatedValues,
+            RedirectAttributes ra) {
         productService.updateProduct(productId, name, price, updatedValues);
+        ra.addFlashAttribute("message", "Товар '" + name + "' был обновлен");
         return "redirect:/products";
     }
 

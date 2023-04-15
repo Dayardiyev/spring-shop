@@ -79,18 +79,4 @@ public class UserController {
         model.addAttribute("user", user);
         return "user_information";
     }
-
-    @GetMapping("/user/orders")
-    public String userOrderListPage(Model model){
-        model.addAttribute("orders", orderRepository.findAllByUserOrderById(userService.getUser()));
-        model.addAttribute("items", orderProductRepository.findAll());
-        return "user_orders";
-    }
-
-    @GetMapping("/user/reviews")
-    public String userReviewListPage(Model model){
-        model.addAttribute("reviews", reviewRepository.findAllByUserOrderById(userService.getUser()));
-        return "user_reviews";
-    }
-
 }

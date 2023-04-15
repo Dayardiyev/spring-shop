@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDateTime;
 
@@ -37,7 +38,8 @@ public class ReviewController {
             @RequestParam(name = "user_id") long userId,
             @RequestParam(name = "product_id") long productId,
             @RequestParam(name = "rating") int rating,
-            @RequestParam(name = "review") String reviewText
+            @RequestParam(name = "review") String reviewText,
+            RedirectAttributes ra
     ){
         Review review = new Review();
         review.setUser(userRepository.findById(userId).orElseThrow());
@@ -47,6 +49,7 @@ public class ReviewController {
         review.setText(reviewText);
         review.setCreated_at(LocalDateTime.now());
         reviewRepository.save(review);
+        ra.addFlashAttribute("reviewMessage", "Отзыв успешно отправлен на проверку");
         return "redirect:/products/" + productId;
     }
 
@@ -57,6 +60,12 @@ public class ReviewController {
         reviewRepository.delete(review);
         Product product = review.getProduct();
         return "redirect:/products/" + product.getId();
+    }
+
+    @GetMapping("/user/reviews")
+    public String userReviewListPage(Model model){
+        model.addAttribute("reviews", reviewRepository.findAllByUserOrderByIdDesc(userService.getUser()));
+        return "user_reviews";
     }
 
     @GetMapping(path = "/user/review/delete/{id}")
