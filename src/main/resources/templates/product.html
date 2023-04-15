@@ -47,9 +47,9 @@
             </div>
             <div class="text-center mb-6 2xl:mb-12 2xl:text-2xl">
                 <i class="fa-solid fa-star text-yellow-400"></i>
-                <span th:if="${@reviewService.getAvgRating(product.getId()) == 0}">-</span>
-                <span class="font-medium" th:if="${@reviewService.getAvgRating(product.getId()) > 0}"
-                      th:text="${#numbers.formatDecimal(@reviewService.getAvgRating(product.getId()), 0, 1, 'POINT')}"></span>
+                <span th:if="${@productService.getAvgRating(product.getId()) == 0}">-</span>
+                <span class="font-medium" th:if="${@productService.getAvgRating(product.getId()) > 0}"
+                      th:text="${#numbers.formatDecimal(@productService.getAvgRating(product.getId()), 0, 1, 'POINT')}"></span>
                 <span class="text-gray-700">/ 5</span>
             </div>
             <div class="py-4 px-4 2xl:px-6 rounded-lg even:bg-slate-100 text-sm 2xl:text-lg"
@@ -61,7 +61,6 @@
             <div class="flex justify-center mt-12 2xl:mt-16">
                 <form th:action="@{/add_item}" method="post">
                     <input type="hidden" name="productId" th:value="${product.getId()}">
-                    <input type="hidden" name="userId" th:value="${@userService.getUser().getId()}">
                     <button type="submit" id="cart-button"
                             class="text-white bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-lg 2xl:text-2xl px-8 py-3.5 2xl:px-12 2xl:py-5">
                         В корзину
@@ -182,8 +181,6 @@
             </div>
         </div>
     </div>
-
-
 </div>
 
 </body>

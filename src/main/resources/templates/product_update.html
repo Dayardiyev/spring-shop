@@ -14,7 +14,7 @@
 </head>
 <body class="h-[100vh] bg-gray-100">
 <div class="container h-full mx-auto flex justify-center items-center" th:object="${product}">
-    <form th:action="@{|/products/edit/${product.getId()}|}" method="post"
+    <form th:action="@{|/products/edit|}" method="post"
           class="h-min lg:w-2/5 bg-white px-10 py-12 rounded-3xl shadow-lg">
         <h2 class="text-3xl text-center pb-6">Редактировать</h2>
         <input type="hidden" name="productId" th:value="${product.getId()}">

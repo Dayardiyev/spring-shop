@@ -4,10 +4,12 @@ package dayardiyev.shop.controller;
 import dayardiyev.shop.entity.Category;
 import dayardiyev.shop.entity.Option;
 import dayardiyev.shop.entity.Product;
-import dayardiyev.shop.repository.*;
+import dayardiyev.shop.entity.Review;
+import dayardiyev.shop.service.CategoryService;
+import dayardiyev.shop.service.OptionService;
 import dayardiyev.shop.service.ProductService;
+import dayardiyev.shop.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -21,22 +23,16 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    private CategoryRepository categoryRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
-
-    @Autowired
     private ProductService productService;
 
     @Autowired
-    private ValueRepository valueRepository;
+    private OptionService optionService;
 
     @Autowired
-    private OptionRepository optionRepository;
+    private ReviewService reviewService;
 
     @Autowired
-    private ReviewRepository reviewRepository;
+    private CategoryService categoryService;
 
 
     @GetMapping()
@@ -44,45 +40,25 @@ public class ProductController {
             @RequestParam(required = false) Long categoryId,
             Model model
     ) {
-        Sort sort = Sort.by(
-                Sort.Order.asc("category"),
-                Sort.Order.asc("id")
-        );
-
-        List<Product> products = productRepository.findAll(sort);;
-
-        if (categoryId != null) {
-            Category category = categoryRepository.findById(categoryId).orElseThrow();
-            model.addAttribute("category_name", category.getName());
-            products = category.getProducts();
-        }
-
-        int avg = 0;
-        if (!products.isEmpty()) {
-            for (Product product : products) {
-                avg = avg + product.getPrice();
-            }
-            avg = avg / products.size();
-        }
-
-        model.addAttribute("avg", avg);
+        List<Product> products = productService.getProducts(categoryId);
         model.addAttribute("products", products);
-        model.addAttribute("categories", categoryRepository.findAll());
+        model.addAttribute("categories", categoryService.getCategories());
         model.addAttribute("categoryId", categoryId);
         return "products";
     }
 
     @GetMapping(path = "/{id}")
     public String getProduct(
-            @PathVariable Long id,
+            @PathVariable long id,
             Model model
     ) {
-        Product product = productRepository.findById(id).orElseThrow();
-        Category category = product.getCategory();
-        List<Option> options = optionRepository.findAllByCategoryOrderById(category);
-        model.addAttribute("reviews", reviewRepository.findAllPublishedReviews(product));
+        Product product = productService.getSingleProduct(id);
+        List<Option> options = optionService.getOptionsByCategory(product.getCategory());
+        List<Review> reviews = reviewService.getAllPublishedReviews(product);
+
         model.addAttribute("product", product);
         model.addAttribute("options", options);
+        model.addAttribute("reviews", reviews);
         return "product";
     }
 
@@ -91,16 +67,16 @@ public class ProductController {
             @RequestParam(required = false) Long categoryId,
             Model model) {
         if (categoryId != null) {
-            Category category = categoryRepository.findById(categoryId).orElseThrow();
+            Category category = categoryService.getById(categoryId);
             List<String> optionValues = new ArrayList<>();
             for (int i = 0; i < category.getOptions().size(); i++) {
                 optionValues.add("");
             }
             model.addAttribute("optionValues", optionValues);
-            model.addAttribute("options", optionRepository.findAllByCategoryOrderById(category));
+            model.addAttribute("options", optionService.getOptionsByCategory(category));
             model.addAttribute("category", category);
         } else {
-            model.addAttribute("categories", categoryRepository.findAll());
+            model.addAttribute("categories", categoryService.getCategories());
         }
         model.addAttribute("categoryId", categoryId);
         model.addAttribute("product", new Product());
@@ -122,15 +98,15 @@ public class ProductController {
     public String updateProduct(
             @PathVariable("id") Long id,
             Model model) {
+        Product product = productService.getSingleProduct(id);
+        List<Option> options = optionService.getOptionsByCategory(product.getCategory());
 
-        Product product = productRepository.findById(id).orElseThrow();
-        List<Option> options = optionRepository.findAllByCategoryOrderById(product.getCategory());
         model.addAttribute("product", product);
         model.addAttribute("options", options);
         return "product_update";
     }
 
-    @PostMapping(path = "/edit/{id}")
+    @PostMapping(path = "/edit")
     public String saveUpdatedProduct(
             @RequestParam long productId,
             @RequestParam(required = false) String name,
@@ -147,10 +123,7 @@ public class ProductController {
             @PathVariable("id") Long id,
             RedirectAttributes ra
     ) {
-        Product product = productRepository.findById(id).orElseThrow();
-        valueRepository.deleteAll(product.getValues());
-        reviewRepository.deleteAll(product.getReviews());
-        productRepository.delete(product);
+        productService.deleteProduct(id);
         ra.addFlashAttribute("message", "Товар с id: " + id + " был удален");
         return "redirect:/products";
     }

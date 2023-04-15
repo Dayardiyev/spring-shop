@@ -1,22 +1,13 @@
 package dayardiyev.shop.service;
 
 
-import dayardiyev.shop.entity.Category;
-import dayardiyev.shop.entity.Option;
-import dayardiyev.shop.entity.Product;
-import dayardiyev.shop.entity.Value;
-import dayardiyev.shop.repository.CategoryRepository;
-import dayardiyev.shop.repository.OptionRepository;
-import dayardiyev.shop.repository.ProductRepository;
-import dayardiyev.shop.repository.ValueRepository;
+import dayardiyev.shop.entity.*;
+import dayardiyev.shop.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.time.Month;
-import java.time.format.TextStyle;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 public class ProductService {
@@ -32,6 +23,9 @@ public class ProductService {
 
     @Autowired
     private OptionRepository optionRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     public void addProduct(long categoryId, Product product, List<String> values) {
         Category category = categoryRepository.findById(categoryId).orElseThrow();
@@ -69,8 +63,45 @@ public class ProductService {
         }
     }
 
+    public void deleteProduct(long id){
+        Product product = productRepository.findById(id).orElseThrow();
+        valueRepository.deleteAll(product.getValues());
+        reviewRepository.deleteAll(product.getReviews());
+        productRepository.delete(product);
+    }
+
     public String findValueByProductAndOption(Product product, Option option) {
         Value value = valueRepository.findByProductAndOption(product, option);
         return value != null ? value.getValue() : "";
+    }
+
+    public double getAvgRating(long productId){
+        Product product = productRepository.findById(productId).orElseThrow();
+        List<Review> reviews = reviewRepository.findAllPublishedReviews(product);
+        double avg = 0;
+        if (!reviews.isEmpty()){
+            for (Review review : reviews){
+                avg = avg + review.getRating();
+            }
+            avg = avg / reviews.size();
+        }
+        return avg;
+    }
+
+    public List<Product> getProducts(Long categoryId){
+        Sort sort = Sort.by(
+                Sort.Order.asc("category"),
+                Sort.Order.asc("id")
+        );
+        List<Product> products =  productRepository.findAll(sort);
+        if (categoryId != null) {
+            Category category = categoryRepository.findById(categoryId).orElseThrow();
+            products = category.getProducts();
+        }
+        return products;
+    }
+
+    public Product getSingleProduct(long id){
+        return productRepository.findById(id).orElseThrow();
     }
 }

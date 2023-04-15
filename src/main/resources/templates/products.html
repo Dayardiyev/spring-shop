@@ -82,7 +82,7 @@
                     </ul>
                 </div>
             </div>
-            <div th:if="${@userService.isAdminOrModer(@userService.getUser())}" class="relative">
+            <div th:if="${@userService.isAdminOrModer()}" class="relative">
                 <div id="adminDropdownButton"
                      class="flex cursor-pointer items-center gap-1 text-gray-700 hover:text-black font-medium">
                     <span th:text="${@userService.getUser().getRole().getServiceName()}"></span>
@@ -124,8 +124,8 @@
             <th class="px-6 py-4">Название</th>
             <th th:if="${categoryId == null}" class="px-6 py-4">Категория</th>
             <th class="px-6 py-4">Цена</th>
-            <th th:if="${@userService.isAdminOrModer(@userService.getUser())}" class="px-4"></th>
-            <th th:if="${@userService.isAdminOrModer(@userService.getUser())}" class="px-6"></th>
+            <th th:if="${@userService.isAdminOrModer()}" class="px-4"></th>
+            <th th:if="${@userService.isAdminOrModer()}" class="px-6"></th>
         </tr>
         </thead>
         <tbody>
@@ -150,12 +150,12 @@
                    th:href="@{|products/${product.getId()}|}"
                    th:text="${product.getPrice()}"></a>
             </td>
-            <td th:if="${@userService.isAdminOrModer(@userService.getUser())}" class="text-center">
+            <td th:if="${@userService.isAdminOrModer()}" class="text-center">
                 <a class="text-blue-600 hover:text-blue-800 text-lg"
                    th:href="@{|/products/edit/${product.getId()}|}">
                     <i class="fa-regular fa-pen-to-square"></i></a>
             </td>
-            <td th:if="${@userService.isAdminOrModer(@userService.getUser())}" class="text-center">
+            <td th:if="${@userService.isAdminOrModer()}" class="text-center">
                 <a class="text-red-600 hover:text-red-800 text-lg"
                    th:href="@{|/products/delete/${product.getId()}|}">
                     <i class="fa-regular fa-trash-can"></i></a>
