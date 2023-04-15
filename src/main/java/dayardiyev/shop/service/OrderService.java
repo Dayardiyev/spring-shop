@@ -11,4 +11,8 @@ public class OrderService {
     public List<Status> getStatuses(){
         return List.of(Status.values());
     }
+
+    public boolean isStatusEquals(Status a, Status b){
+        return a == b;
+    }
 }

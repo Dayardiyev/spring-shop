@@ -34,7 +34,7 @@
         <thead class="text-gray-500">
         <tr>
             <th class="pr-6 py-4">Товары</th>
-            <th class="px-4 text-center">Статус</th>
+            <th class="px-4">Статус</th>
             <th class="px-6 py-4 text-right">Дата оформление</th>
         </tr>
         </thead>
@@ -47,7 +47,7 @@
                     <span class="text-gray-600 font-light" th:text="'x' + ${orderProduct.getAmount()}"></span>
                 </span>
             </td>
-            <td class="text-center">
+            <td class="px-4">
                 <span th:text="${order.getStatus().getDisplayStatusName()}"></span>
             </td>
             <td class="px-6 py-4 text-right text-lg"

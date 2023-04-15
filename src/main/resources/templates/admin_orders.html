@@ -43,7 +43,7 @@
         <tr class="font-medium border-b last:border-0" th:each="order : ${orders}">
             <td class="pr-6 py-4 grid">
                 <span class="text-lg"
-                   th:each="orderProduct : ${order.getOrderProducts()}">
+                      th:each="orderProduct : ${order.getOrderProducts()}">
                     <span th:text="${orderProduct.getProduct().getName()}"></span>
                     <span class="text-gray-600 font-light" th:text="'x' + ${orderProduct.getAmount()}"></span>
                 </span>
@@ -54,11 +54,10 @@
                     <input type="hidden" name="orderId" th:value="${order.getId()}">
                     <select name="status" id="status" onchange="this.form.submit()"
                             class="bg-white cursor-pointer">
-                        <option th:text="${order.getStatus().getDisplayStatusName()}"
-                                class="hidden" selected></option>
                         <option th:each="status : ${@orderService.getStatuses()}"
                                 th:text="${status.getDisplayStatusName()}"
-                        th:value="${status}"></option>
+                                th:value="${status}"
+                                th:selected="${status== order.getStatus()}"></option>
                     </select>
                 </form>
             </td>

@@ -150,7 +150,7 @@
 
     <!--  Add to cart Modal  -->
     <div th:if="${message}" id="cart-modal" class="flex fixed top-0 right-0 h-full w-full items-center justify-center bg-black/80">
-        <div id="cart-overlay" class="absolute z-1 h-full w-full"></div>
+        <div id="cart-overlay" class="absolute z-1 h-full w-full cursor-pointer"></div>
         <div class="grid gap-6 text-center h-min w-1/4 bg-white px-10 py-12 rounded-3xl shadow-lg z-50">
             <i class="fa-regular fa-circle-check text-5xl text-blue-600"></i>
             <p>Товар был добавлен в корзину</p>
@@ -251,6 +251,7 @@
 
     const cartModal = document.getElementById('cart-modal');
     const cartButton = document.getElementById('cart-button');
+    const cartOverlay = document.getElementById('cart-overlay');
 
     reviewButton.addEventListener("click", () => {
         reviewModal.classList.add('active')
@@ -264,9 +265,11 @@
         reviewModal.classList.remove('active')
     })
 
-    document.getElementById('cart-overlay').addEventListener("click", () => {
-        cartModal.classList.remove('active')
-    })
+    if (cartOverlay != null) {
+        cartOverlay.addEventListener("click", () => {
+            cartModal.classList.add('hidden')
+        })
+    }
 
 </script>
 </html>
