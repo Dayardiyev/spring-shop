@@ -60,7 +60,7 @@ public class CartItemService {
         if (cartItem.getAmount() > 1){
             cartItem.setAmount(cartItem.getAmount() - 1);
             cartItemRepository.save(cartItem);
-        } else if (cartItem.getAmount() <= 1) {
+        } else {
             cartItemRepository.delete(cartItem);
         }
     }
@@ -75,7 +75,7 @@ public class CartItemService {
     public int getTotalPrice(List<CartItem> cartItems){
         int total = 0;
         for (CartItem cartItem : cartItems) {
-            total = getPrice(cartItem);
+            total = total + getPrice(cartItem);
         }
         return total;
     }
