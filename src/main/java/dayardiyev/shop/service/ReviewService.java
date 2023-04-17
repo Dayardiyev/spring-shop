@@ -27,7 +27,7 @@ public class ReviewService {
     @Autowired
     private UserService userService;
 
-    public void createReview(long productId, int rating, String reviewText){
+    public void createReview(long productId, int rating, String reviewText) {
         Review review = new Review();
         review.setUser(userService.getUser());
         review.setProduct(productRepository.findById(productId).orElseThrow());
@@ -38,12 +38,12 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    public void deleteReview(long id){
+    public void deleteReview(long id) {
         Review review = reviewRepository.findById(id).orElseThrow();
         reviewRepository.delete(review);
     }
 
-    public void postReview(long id){
+    public void postReview(long id) {
         Review review = reviewRepository.findById(id).orElseThrow();
         review.setPublished(true);
         reviewRepository.save(review);
@@ -70,15 +70,15 @@ public class ReviewService {
         return month.getDisplayName(TextStyle.FULL, locale);
     }
 
-    public List<Review> getAllPublishedReviews(Product product) {
+    public List<Review> getPublishedReviews(Product product) {
         return reviewRepository.findAllPublishedReviews(product);
     }
 
-    public List<Review> getAllByUser(){
+    public List<Review> getReviewsByUser() {
         return reviewRepository.findAllByUserOrderByIdDesc(userService.getUser());
     }
 
-    public List<Review> getAllNotPublishedReviews(){
+    public List<Review> getNotPublishedReviews() {
         return reviewRepository.findAllNotPublishedReviews();
     }
 }

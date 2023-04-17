@@ -17,7 +17,7 @@ public class CartController {
     @Autowired
     private CartItemService cartItemService;
 
-    @GetMapping("/cart")
+    @GetMapping(path = "/cart")
     public String getCartPage(Model model) {
         List<CartItem> cartItems = cartItemService.getItemsByUser();
 
@@ -26,31 +26,31 @@ public class CartController {
         return "cart";
     }
 
-    @GetMapping("/cart/remove")
-    public String removeItemFromCart(@RequestParam long id){
+    @GetMapping(path = "/cart/remove")
+    public String removeItemFromCart(@RequestParam long id) {
         cartItemService.removeItemFromCart(id);
         return "redirect:/cart";
     }
 
-    @GetMapping("/cart/remove_all")
-    public String removeAllItems(){
+    @GetMapping(path = "/cart/remove_all")
+    public String removeAllItems() {
         cartItemService.removeAllItems();
         return "redirect:/cart";
     }
 
-    @GetMapping("/increase_amount")
-    public String increaseAmount(@RequestParam("cartItemId") Long id){
+    @GetMapping(path = "/increase_amount")
+    public String increaseAmount(@RequestParam("cartItemId") Long id) {
         cartItemService.increaseAmount(id);
         return "redirect:/cart";
     }
 
-    @GetMapping("/decrease_amount")
-    public String decreaseAmount(@RequestParam("cartItemId") Long id){
+    @GetMapping(path = "/decrease_amount")
+    public String decreaseAmount(@RequestParam("cartItemId") Long id) {
         cartItemService.decreaseAmount(id);
         return "redirect:/cart";
     }
 
-    @PostMapping("/add_item")
+    @PostMapping(path = "/add_item")
     public String addProductToCart(
             @RequestParam long productId,
             RedirectAttributes redirectAttributes

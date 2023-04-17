@@ -10,11 +10,32 @@
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap"
           rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <title>User profile</title>
+    <script src="https://kit.fontawesome.com/176ce5fa08.js" crossorigin="anonymous"></script>
+    <title>Пользователь</title>
 </head>
-<body class="h-[100vh] bg-gray-100">
-<div class="container h-full mx-auto flex justify-center items-center">
-<p>User profile Page</p>
+<body class="h-screen">
+<header class="py-12">
+    <div class="container mx-auto flex items-center gap-5 text-gray-700 font-medium">
+        <a th:href="@{/products}" class="hover:text-blue-700">Главная</a>
+        <i class="fa-solid fa-caret-right text-sm"></i>
+        <span class="text-blue-600">Пользователь</span>
+    </div>
+</header>
+<div class="container mx-auto">
+    <div class="px-10 py-12 rounded-md w-fit">
+        <p class="text-2xl font-medium" th:text="${user.getName()} + ' ' + ${user.getLastname()}"></p>
+        <p class="text-lg text-gray-700" th:text="'@' + ${user.getLogin()}"></p>
+        <div class="flex mt-4 justify-between gap-6 px-4">
+            <div class="text-center">
+                <p class="font-medium text-gray-700">Отзывы</p>
+                <a th:href="@{/user/reviews}" class="font-medium text-xl hover:text-blue-700" th:text="${user.getReviews().size()}"></a>
+            </div>
+            <div class="text-center">
+                <p class="font-medium text-gray-700">Заказы</p>
+                <a th:href="@{/user/orders}" class="font-medium text-xl hover:text-blue-700" th:text="${user.getOrders().size()}"></a>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>

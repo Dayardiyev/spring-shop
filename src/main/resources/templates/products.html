@@ -34,7 +34,7 @@
 
         <div class="items-center pl-6 font-medium text-3xl">
             <span th:if="${categoryId == null}"
-                  th:text="'Welcome, ' + ${@userService.getUser().getName()} + ' 👋'"></span>
+                  th:text="${@userService.greeting()} + ${@userService.getUser().getName()} + ' 👋'"></span>
             <span th:if="${categoryId != null}"
                   th:text="${@categoryRepository.findById(categoryId).orElseThrow().getName()}"></span>
         </div>
@@ -46,7 +46,8 @@
                     <i class="fa-solid fa-chevron-down text-sm"></i>
                 </div>
                 <!-- Dropdown menu -->
-                <div id="categoryDropdown" class="bg-white rounded-lg font-medium shadow min-w-[155px] absolute w-full z-10">
+                <div id="categoryDropdown"
+                     class="bg-white rounded-lg font-medium shadow min-w-[155px] absolute w-full z-10">
                     <ul>
                         <li th:if="${categoryId != null}">
                             <a th:href="@{/products}"
@@ -72,13 +73,20 @@
                     <ul>
                         <li>
                             <a class="block px-5 py-2 hover:bg-gray-100"
+                               th:href="@{/user}">Профиль</a>
+                        </li>
+                        <li>
+                            <a class="block px-5 py-2 hover:bg-gray-100"
                                th:href="@{/user/orders}">Мои заказы</a>
                         </li>
                         <li>
                             <a class="block px-5 py-2 hover:bg-gray-100"
                                th:href="@{/user/reviews}">Мои отзывы</a>
                         </li>
-                        <li class="block px-5 pt-3.5 pb-2 border-t hover:bg-gray-100 text-red-600">Выйти</li>
+                        <li>
+                            <a th:href="@{/logout}"
+                               class="block px-5 pt-3.5 pb-2 border-t hover:bg-gray-100 text-red-600">Выйти</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -123,7 +131,8 @@
             <th class="px-6 py-4">#</th>
             <th class="px-6 py-4">Название</th>
             <th th:if="${categoryId == null}" class="px-6 py-4">Категория</th>
-            <th class="px-6 py-4">Цена</th>
+            <th th:if="${!@userService.isAdminOrModer()}" class="px-9 py-4 text-right">Цена</th>
+            <th th:if="${@userService.isAdminOrModer()}" class="px-6 py-4">Цена</th>
             <th th:if="${@userService.isAdminOrModer()}" class="px-4"></th>
             <th th:if="${@userService.isAdminOrModer()}" class="px-6"></th>
         </tr>
@@ -145,7 +154,12 @@
                    th:href="@{|products/${product.getId()}|}"
                    th:text="${product.getCategory().getName()}"></a>
             </td>
-            <td class="text-gray-500">
+            <td th:if="${!@userService.isAdminOrModer()}"  class="text-gray-500 text-right">
+                <a class="px-9 py-4 block"
+                   th:href="@{|products/${product.getId()}|}"
+                   th:text="${product.getPrice()}"></a>
+            </td>
+            <td th:if="${@userService.isAdminOrModer()}"  class="text-gray-500">
                 <a class="px-6 py-4 block"
                    th:href="@{|products/${product.getId()}|}"
                    th:text="${product.getPrice()}"></a>

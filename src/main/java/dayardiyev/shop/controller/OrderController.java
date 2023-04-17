@@ -21,9 +21,6 @@ public class OrderController {
     @Autowired
     private CartItemService cartItemService;
 
-    @Autowired
-    private UserService userService;
-
     @GetMapping(path = "/order")
     public String orderPage(Model model){
         model.addAttribute("cartItems", cartItemService.getItemsByUser());
@@ -36,30 +33,5 @@ public class OrderController {
     ){
         orderService.createOrder(address);
         return "redirect:/user/orders";
-    }
-
-    @GetMapping("/user/orders")
-    public String userOrderListPage(Model model){
-        model.addAttribute("orders", orderService.getAllByUser());
-        return "user_orders";
-    }
-
-    @GetMapping("/admin/orders")
-    public String getOrdersAsAdminOrModer(Model model){
-        if (userService.isAdminOrModer()){
-            model.addAttribute("orders", orderService.getAll());
-            return "admin_orders";
-        }
-        return "redirect:/products";
-    }
-
-
-    @GetMapping("/admin/orders/change_status")
-    public String changeStatus(
-            @RequestParam long orderId,
-            @RequestParam Status status
-    ){
-        orderService.changeStatus(orderId, status);
-        return "redirect:/admin/orders";
     }
 }

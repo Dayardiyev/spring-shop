@@ -54,7 +54,7 @@ public class ProductController {
     ) {
         Product product = productService.getSingleProduct(id);
         List<Option> options = optionService.getOptionsByCategory(product.getCategory());
-        List<Review> reviews = reviewService.getAllPublishedReviews(product);
+        List<Review> reviews = reviewService.getPublishedReviews(product);
 
         model.addAttribute("product", product);
         model.addAttribute("options", options);

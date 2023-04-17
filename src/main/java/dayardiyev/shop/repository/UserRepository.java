@@ -3,7 +3,8 @@ package dayardiyev.shop.repository;
 import dayardiyev.shop.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+import java.util.Optional;
 
-    User findByLoginAndPassword(String login, String password);
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findByLogin(String login);
 }

@@ -31,7 +31,7 @@ public class OrderService {
     @Autowired
     private UserService userService;
 
-    public void createOrder(String address){
+    public void createOrder(String address) {
         List<CartItem> cartItems = cartItemRepository.findAllByUserOrderById(userService.getUser());
         Order order = new Order();
         order.setUser(userService.getUser());
@@ -49,25 +49,25 @@ public class OrderService {
         cartItemRepository.deleteAllByUser(userService.getUser());
     }
 
-    public void changeStatus(long id, Status status){
+    public void changeStatus(long id, Status status) {
         Order order = orderRepository.findById(id).orElseThrow();
         order.setStatus(status);
         orderRepository.save(order);
     }
 
-    public List<Order> getAllByUser(){
+    public List<Order> getOrdersByUser() {
         return orderRepository.findAllByUserOrderByIdDesc(userService.getUser());
     }
 
-    public List<Order> getAll(){
+    public List<Order> getOrders() {
         return orderRepository.findAllByOrderById();
     }
 
-    public List<Status> getStatuses(){
+    public List<Status> getStatuses() {
         return List.of(Status.values());
     }
 
-    public String getOrderDate(LocalDateTime date){
+    public String getOrderDate(LocalDateTime date) {
         return date.getDayOfMonth() + " "
                 + getMonthOnRus(date) + " "
                 + date.getYear() + " г. в "
@@ -75,7 +75,7 @@ public class OrderService {
                 + String.format("%02d", date.getMinute());
     }
 
-    public String getMonthOnRus(LocalDateTime date){
+    public String getMonthOnRus(LocalDateTime date) {
         Month month = date.getMonth();
         Locale locale = new Locale("ru", "KZ");
         return month.getDisplayName(TextStyle.SHORT, locale);
