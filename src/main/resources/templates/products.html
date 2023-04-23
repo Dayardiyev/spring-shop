@@ -34,7 +34,7 @@
 
         <div class="items-center pl-6 font-medium text-3xl">
             <span th:if="${categoryId == null}"
-                  th:text="${@userService.greeting()} + ${@userService.getUser().getName()} + ' 👋'"></span>
+                  th:text="${@userService.greeting()} + ' 👋'"></span>
             <span th:if="${categoryId != null}"
                   th:text="${@categoryRepository.findById(categoryId).orElseThrow().getName()}"></span>
         </div>
@@ -61,7 +61,11 @@
                     </ul>
                 </div>
             </div>
-            <div class="relative">
+            <div th:if="${!@userService.isAuthenticated()}" class="flex items-center text-blue-600 font-medium gap-4">
+                <a class="hover:underline" th:href="@{/login}">Войти</a>
+                <a class="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 text-white" th:href="@{/registration}">Регистрация</a>
+            </div>
+            <div th:if="${@userService.isAuthenticated()}" class="relative">
                 <div id="userDropdownButton"
                      class="flex cursor-pointer items-center gap-1 text-gray-700 hover:text-black font-medium">
                     <span th:text="${@userService.getUser().getName()}"></span>
@@ -116,7 +120,7 @@
                     </ul>
                 </div>
             </div>
-            <a class="text-gray-700 hover:text-black font-medium text-2xl"
+            <a th:if="${@userService.isAuthenticated()}" class="text-gray-700 hover:text-black font-medium text-2xl"
                th:href="@{/cart}">
                 <span class="iconify" data-icon="solar:bag-3-linear" data-width="40" data-height="40"></span>
             </a>
@@ -128,22 +132,15 @@
     <table class="w-full text-left">
         <thead class="text-gray-500">
         <tr>
-            <th class="px-6 py-4">#</th>
             <th class="px-6 py-4">Название</th>
             <th th:if="${categoryId == null}" class="px-6 py-4">Категория</th>
-            <th th:if="${!@userService.isAdminOrModer()}" class="px-9 py-4 text-right">Цена</th>
-            <th th:if="${@userService.isAdminOrModer()}" class="px-6 py-4">Цена</th>
+            <th class="px-6 py-4">Цена</th>
             <th th:if="${@userService.isAdminOrModer()}" class="px-4"></th>
             <th th:if="${@userService.isAdminOrModer()}" class="px-6"></th>
         </tr>
         </thead>
         <tbody>
         <tr class="font-medium hover:bg-teal-50" th:each="product : ${products}">
-            <td>
-                <a class="px-6 py-4 block"
-                   th:href="@{|products/${product.getId()}|}"
-                   th:text="${product.getId()}"></a>
-            </td>
             <td>
                 <a class="px-6 py-4 block"
                    th:href="@{|products/${product.getId()}|}"
@@ -154,12 +151,7 @@
                    th:href="@{|products/${product.getId()}|}"
                    th:text="${product.getCategory().getName()}"></a>
             </td>
-            <td th:if="${!@userService.isAdminOrModer()}"  class="text-gray-500 text-right">
-                <a class="px-9 py-4 block"
-                   th:href="@{|products/${product.getId()}|}"
-                   th:text="${product.getPrice()}"></a>
-            </td>
-            <td th:if="${@userService.isAdminOrModer()}"  class="text-gray-500">
+            <td class="text-gray-500">
                 <a class="px-6 py-4 block"
                    th:href="@{|products/${product.getId()}|}"
                    th:text="${product.getPrice()}"></a>
@@ -205,36 +197,44 @@
     const adminDropdownButton = document.getElementById('adminDropdownButton');
 
     categoryDropdownButton.addEventListener('click', () => {
-        userDropdown.classList.remove('active')
+        if (userDropdown != null) userDropdown.classList.remove('active')
         if (adminDropdown != null) adminDropdown.classList.remove('active')
         categoryDropdown.classList.toggle('active')
     })
 
-    userDropdownButton.addEventListener('click', () => {
-        categoryDropdown.classList.remove('active')
-        if (adminDropdown != null) adminDropdown.classList.remove('active')
-        userDropdown.classList.toggle('active')
-    })
+    if (userDropdown != null) {
+        userDropdownButton.addEventListener('click', () => {
+            categoryDropdown.classList.remove('active')
+            if (adminDropdown != null) adminDropdown.classList.remove('active')
+            userDropdown.classList.toggle('active')
+        })
+    }
 
-    adminDropdownButton.addEventListener('click', () => {
-        categoryDropdown.classList.remove('active')
-        userDropdown.classList.remove('active')
-        adminDropdown.classList.toggle('active')
-    })
+    if (adminDropdown != null) {
+        adminDropdownButton.addEventListener('click', () => {
+            categoryDropdown.classList.remove('active')
+            if (userDropdown != null) userDropdown.classList.remove('active')
+            adminDropdown.classList.toggle('active')
+        })
+    }
 
 
     // Toast Notifier
     const toast = document.getElementById('toast');
     const toastCloseButton = document.getElementById('toastCloseButton');
 
-    toastCloseButton.addEventListener('click', () => {
-        toast.classList.add('hidden')
-    })
 
-    setTimeout(() => {
-        if (!toast.classList.contains('hidden')) {
+    if (toast != null) {
+
+        toastCloseButton.addEventListener('click', () => {
             toast.classList.add('hidden')
-        }
-    }, 7000)
+        })
+
+        setTimeout(() => {
+            if (!toast.classList.contains('hidden')) {
+                toast.classList.add('hidden')
+            }
+        }, 7000)
+    }
 </script>
 </html>

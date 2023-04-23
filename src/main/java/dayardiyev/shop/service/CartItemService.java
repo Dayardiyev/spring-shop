@@ -32,11 +32,11 @@ public class CartItemService {
             cartItem.setAmount(cartItem.getAmount() + 1);
             cartItemRepository.save(cartItem);
         } else {
-            CartItem newCartItem = new CartItem();
-            newCartItem.setProduct(product);
-            newCartItem.setUser(userService.getUser());
-            newCartItem.setAmount(1);
-            cartItemRepository.save(newCartItem);
+            cartItem = new CartItem();
+            cartItem.setProduct(product);
+            cartItem.setUser(userService.getUser());
+            cartItem.setAmount(1);
+            cartItemRepository.save(cartItem);
         }
     }
 
@@ -66,7 +66,7 @@ public class CartItemService {
     }
 
     public String cartAmount(){
-        int amount = getAmountOfCartItems(userService.getUser());
+        int amount = getAmountOfCartItems();
         if (amount >= 2) return "(" + amount + " товара)";
         else if (amount == 1) return "(" + amount + " товар)";
         else return "";
@@ -84,8 +84,8 @@ public class CartItemService {
         return cartItem.getProduct().getPrice() * cartItem.getAmount();
     }
 
-    public int getAmountOfCartItems(User user){
-        List<CartItem> list = cartItemRepository.findAllByUserOrderById(user);
+    public int getAmountOfCartItems(){
+        List<CartItem> list = cartItemRepository.findAllByUserOrderById(userService.getUser());
         int totalItems = 0;
         for (CartItem cartItem : list) {
             totalItems = totalItems + cartItem.getAmount();

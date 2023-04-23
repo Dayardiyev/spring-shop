@@ -14,9 +14,9 @@ public class SecurityConfig {
         http.csrf().disable();
 
         http.authorizeHttpRequests((request) -> request
-                .requestMatchers("/registration", "/login").permitAll()
-                .requestMatchers("/admin/**").hasAnyRole("admin", "moder")
-                .anyRequest().authenticated()
+                        .requestMatchers("/user/**").authenticated()
+                        .requestMatchers("/admin/**").hasAnyRole("admin", "moder")
+                        .anyRequest().permitAll()
         );
 
         http.formLogin((form) -> {

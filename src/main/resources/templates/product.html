@@ -59,9 +59,15 @@
                       th:text="${@productService.findValueByProductAndOption(product, option)}"></span>
             </div>
             <div class="flex justify-center mt-12 2xl:mt-16">
-                <form th:action="@{/add_item}" method="post">
-                    <input type="hidden" name="productId" th:value="${product.getId()}">
+                <div th:if="${!@userService.isAuthenticated()}">
                     <button type="submit" id="cart-button"
+                            class="text-white bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-lg 2xl:text-2xl px-8 py-3.5 2xl:px-12 2xl:py-5">
+                        В корзину
+                    </button>
+                </div>
+                <form th:if="${@userService.isAuthenticated()}" th:action="@{/add_item}" method="post">
+                    <input type="hidden" name="productId" th:value="${product.getId()}">
+                    <button type="submit"
                             class="text-white bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-lg 2xl:text-2xl px-8 py-3.5 2xl:px-12 2xl:py-5">
                         В корзину
                     </button>
@@ -76,14 +82,20 @@
             (<span th:text="${@reviewService.getPublishedReviewsSize(product)}"></span>)
         </p>
         <div class="mb-5">
-            <a id="review-button" class="text-blue-600 hover:underline cursor-pointer 2xl:text-lg font-medium">
+            <a th:if="${@userService.isAuthenticated()}" id="review-button"
+               class="text-blue-600 hover:underline cursor-pointer 2xl:text-lg font-medium">
                 Оставить отзыв</a>
+            <div class="2xl:text-lg font-medium" th:if="${!@userService.isAuthenticated()}">
+                <span class="text-gray-700">Чтобы оставить отзыв необходимо</span>
+                <a class="text-blue-600 hover:underline" th:href="@{/login}">авторизоваться</a>
+            </div>
         </div>
         <div class="border-b w-full p-6 last:border-none shadow-lg bg-white rounded-lg mb-5 grid gap-2"
              th:each="review : ${reviews}">
             <div class="flex flex-col relative justify-center">
                 <a th:href="@{|/review/delete/${review.getId()}|}" th:if="${review.getUser() == @userService.getUser()}"
-                   class="absolute right-0 top-0 text-red-600 hover:text-red-800 text-lg 2xl:text-xl cursor-pointer"><i class="fa-regular fa-trash-can"></i></a>
+                   class="absolute right-0 top-0 text-red-600 hover:text-red-800 text-lg 2xl:text-xl cursor-pointer"><i
+                        class="fa-regular fa-trash-can"></i></a>
                 <p class="text-lg 2xl:text-2xl font-medium mr-2.5"
                    th:text="${review.getUser().getName()} + ' ' + ${review.getUser().getLastname()}"></p>
                 <div class="flex gap-2 items-center text-gray-600 font-medium 2xl:text-md">
@@ -104,67 +116,70 @@
     </div>
 
     <!-- Review Modal -->
-    <div id="review-modal" class="modal fixed top-0 right-0 h-full w-full items-center justify-center bg-black/80">
-        <div id="review-overlay" class="absolute z-1 h-full w-full"></div>
-        <div th:if="${@reviewService.isReviewPresent(product, @userService.getUser())}"
-             class="h-min bg-white px-10 py-12 rounded-3xl shadow-lg z-50 grid gap-4">
-            <p class="text-2xl font-medium">Вы уже ранее оставляли отзыв на этот товар</p>
-        </div>
-        <form th:unless="${@reviewService.isReviewPresent(product, @userService.getUser())}"
-              th:action="@{/for_checking}" method="post"
-              class="h-min bg-white px-10 py-12 rounded-3xl shadow-lg z-50 grid gap-4">
-            <input type="hidden" name="user_id" th:value="${@userService.getUser().getId()}">
-            <input type="hidden" name="product_id" th:value="${product.getId()}">
-            <div class="rating text-5xl flex justify-center">
-                <div class="w-fit relative">
-                    <label>
-                        <input type="radio" name="rating" value="1" required/>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                    </label>
-                    <label>
-                        <input type="radio" name="rating" value="2"/>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                    </label>
-                    <label>
-                        <input type="radio" name="rating" value="3"/>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                    </label>
-                    <label>
-                        <input type="radio" name="rating" value="4"/>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                    </label>
-                    <label>
-                        <input type="radio" name="rating" value="5"/>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                        <i class="fa-solid fa-star text-yellow-400"></i>
-                    </label>
+    <div id="review-modal" class="hidden fixed top-0 right-0 h-full w-full items-center justify-center bg-black/80">
+        <div id="review-overlay" class="absolute z-1 h-full w-full cursor-pointer"></div>
+        <div th:if="${@userService.isAuthenticated()}" class="z-50">
+            <div th:if="${@reviewService.isReviewPresent(product, @userService.getUser())}"
+                 class="h-min bg-white px-10 py-12 rounded-3xl shadow-lg z-50 grid gap-4">
+                <p class="text-2xl font-medium">Вы уже ранее оставляли отзыв на этот товар</p>
+            </div>
+            <form th:unless="${@reviewService.isReviewPresent(product, @userService.getUser())}"
+                  th:action="@{/for_checking}" method="post"
+                  class="h-min bg-white px-10 py-12 rounded-3xl shadow-lg grid gap-4">
+                <input type="hidden" name="user_id" th:value="${@userService.getUser().getId()}">
+                <input type="hidden" name="product_id" th:value="${product.getId()}">
+                <div class="rating text-5xl flex justify-center">
+                    <div class="w-fit relative">
+                        <label>
+                            <input type="radio" name="rating" value="1" required/>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                        </label>
+                        <label>
+                            <input type="radio" name="rating" value="2"/>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                        </label>
+                        <label>
+                            <input type="radio" name="rating" value="3"/>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                        </label>
+                        <label>
+                            <input type="radio" name="rating" value="4"/>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                        </label>
+                        <label>
+                            <input type="radio" name="rating" value="5"/>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                            <i class="fa-solid fa-star text-yellow-400"></i>
+                        </label>
+                    </div>
                 </div>
-            </div>
-            <div class="mt-12 grid gap-1">
-                <label class="font-medium text-gray" for="review">Комментарий</label>
-                <textarea name="review" id="review" cols="40" rows="10"
-                          class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required></textarea>
-            </div>
-            <div class="flex justify-end">
-                <button type="submit"
-                        class="text-white bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm 2xl:text-md px-5 py-2.5">
-                    Отправить
-                </button>
-            </div>
-        </form>
+                <div class="mt-12 grid gap-1">
+                    <label class="font-medium text-gray" for="review">Комментарий</label>
+                    <textarea name="review" id="review" cols="40" rows="10"
+                              class="py-1.5 px-2.5 border border-gray-300 bg-gray-50 rounded-lg" required></textarea>
+                </div>
+                <div class="flex justify-end">
+                    <button type="submit"
+                            class="text-white bg-blue-600 hover:bg-blue-800 font-medium rounded-lg text-sm 2xl:text-md px-5 py-2.5">
+                        Отправить
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
 
     <!--  Add to cart Modal  -->
-    <div th:if="${message}" id="cart-modal" class="flex fixed top-0 right-0 h-full w-full items-center justify-center bg-black/80">
+    <div th:if="${message}" id="cart-modal"
+         class="flex fixed top-0 right-0 h-full w-full items-center justify-center bg-black/80">
         <div id="cart-overlay" class="absolute z-1 h-full w-full cursor-pointer"></div>
         <div class="grid gap-6 text-center h-min w-1/4 bg-white px-10 py-12 rounded-3xl shadow-lg z-50">
             <i class="fa-regular fa-circle-check text-5xl text-blue-600"></i>
@@ -181,6 +196,18 @@
             </div>
         </div>
     </div>
+
+    <!--  Add to cart Modal if user is not logged in -->
+    <div th:if="${!@userService.isAuthenticated()}" id="cart-modal"
+         class="hidden fixed top-0 right-0 h-full w-full items-center justify-center bg-black/80">
+        <div id="cart-overlay" class="absolute z-1 h-full w-full cursor-pointer"></div>
+        <div class="flex text-center h-min min-w-1/3 bg-white px-10 py-12 rounded-3xl shadow-lg z-50">
+            <div class="text-2xl font-medium">
+                <span class="text-gray-700">Чтобы добавить товар в корзину необходимо</span><br>
+                <a class="text-blue-600 hover:underline" th:href="@{/login}">авторизоваться</a>
+            </div>
+        </div>
+    </div>
 </div>
 
 </body>
@@ -189,14 +216,6 @@
     body {
         font-family: 'Montserrat', sans-serif;
         overflow: overlay;
-    }
-
-    .modal {
-        display: none;
-    }
-
-    .modal.active {
-        display: flex;
     }
 
     .rating label {
@@ -261,22 +280,29 @@
 <script !src="">
     const reviewModal = document.getElementById('review-modal');
     const reviewButton = document.getElementById('review-button');
+    const reviewOverlay = document.getElementById('review-overlay');
 
     const cartModal = document.getElementById('cart-modal');
     const cartButton = document.getElementById('cart-button');
     const cartOverlay = document.getElementById('cart-overlay');
 
-    reviewButton.addEventListener("click", () => {
-        reviewModal.classList.add('active')
-    });
+    if (reviewButton != null) {
+        reviewButton.addEventListener("click", () => {
+            reviewModal.classList.remove('hidden')
+            reviewModal.classList.add('flex')
+        });
 
-    cartButton.addEventListener("click", () => {
-        cartModal.classList.add('active')
-    });
+        reviewOverlay.addEventListener("click", () => {
+            reviewModal.classList.add('hidden')
+        });
+    }
 
-    document.getElementById('review-overlay').addEventListener("click", () => {
-        reviewModal.classList.remove('active')
-    })
+    if (cartButton != null) {
+        cartButton.addEventListener("click", () => {
+            cartModal.classList.remove('hidden')
+            cartModal.classList.add('flex')
+        });
+    }
 
     if (cartOverlay != null) {
         cartOverlay.addEventListener("click", () => {
@@ -288,15 +314,18 @@
     const toast = document.getElementById('toast');
     const toastCloseButton = document.getElementById('toastCloseButton');
 
-    toastCloseButton.addEventListener('click', () => {
-        toast.classList.add('hidden')
-    })
+    if (toast != null) {
 
-    setTimeout(() => {
-        if (!toast.classList.contains('hidden')) {
+        toastCloseButton.addEventListener('click', () => {
             toast.classList.add('hidden')
-        }
-    }, 12500)
+        })
+
+        setTimeout(() => {
+            if (!toast.classList.contains('hidden')) {
+                toast.classList.add('hidden')
+            }
+        }, 12500)
+    }
 
 </script>
 </html>
